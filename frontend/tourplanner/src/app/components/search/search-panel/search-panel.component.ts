@@ -1,30 +1,52 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, signal, computed } from '@angular/core';
 
 @Component({
   selector: 'app-search-panel',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './search-panel.component.html',
   styleUrl: './search-panel.component.css',
 })
 export class SearchPanelComponent {
-  // private readonly tourService = inject(TourService);
+  // fake input state
+  readonly searchQuery = signal('');
 
-  // readonly searchQuery = signal('');
-  // readonly results = signal<SearchResult>({ tours: [], logs: [], matchedFields: new Map() });
+  // fake results (replace later with service)
+  readonly results = signal({
+    tours: [
+      {
+        id: '1',
+        name: 'Vienna Ride',
+        transportType: 'bike',
+        description: 'Nice ride',
+        from: 'Vienna',
+        to: 'Danube',
+        distance: 12
+      }
+    ],
+    logs: [
+      {
+        id: 'l1',
+        tourId: '1',
+        date: new Date(),
+        comment: 'Great ride',
+        totalDistance: 12,
+        totalTime: 80,
+        difficulty: 3,
+        rating: 4
+      }
+    ],
+    matchedFields: new Map()
+  });
 
-  // onSearch(): void {
-  //   const query = this.searchQuery();
-  //   if (query.trim()) {
-  //     this.results.set(this.tourService.search(query));
-  //   } else {
-  //     this.results.set({ tours: [], logs: [], matchedFields: new Map() });
-  //   }
-  // }
+  // update query (fake search for now)
+  onSearch(value: string) {
+    this.searchQuery.set(value);
+  }
 
-  // clearSearch(): void {
-  //   this.searchQuery.set('');
-  //   this.results.set({ tours: [], logs: [], matchedFields: new Map() });
-  // }
+  clearSearch() {
+    this.searchQuery.set('');
+  }
 
   formatFieldName(field: string): string {
     const names: Record<string, string> = {

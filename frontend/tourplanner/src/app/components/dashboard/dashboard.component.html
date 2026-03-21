@@ -18,7 +18,7 @@
               </div>
               <div>
                 <p class="text-sm text-muted-foreground">Total Tours</p>
-                <p class="text-2xl font-bold text-foreground">stats().totalTours</p>
+                <p class="text-2xl font-bold text-foreground"> {{ stats().totalTours }}</p>
               </div>
             </div>
           </div>
@@ -32,7 +32,7 @@
               </div>
               <div>
                 <p class="text-sm text-muted-foreground">Total Logs</p>
-                <p class="text-2xl font-bold text-foreground">stats().totalLogs</p>
+                <p class="text-2xl font-bold text-foreground"> {{ stats().totalLogs }}</p>
               </div>
             </div>
           </div>
@@ -46,7 +46,7 @@
               </div>
               <div>
                 <p class="text-sm text-muted-foreground">Total Distance</p>
-                <p class="text-2xl font-bold text-foreground">stats().totalDistance  km</p>
+                <p class="text-2xl font-bold text-foreground"> {{ stats().totalDistance }} km</p>
               </div>
             </div>
           </div>
@@ -60,7 +60,7 @@
               </div>
               <div>
                 <p class="text-sm text-muted-foreground">Total Time</p>
-                <p class="text-2xl font-bold text-foreground">{{ stats().totalTime}h</p>
+                <p class="text-2xl font-bold text-foreground">{{ stats().totalTime}} h</p>
               </div>
             </div>
           </div>
@@ -84,7 +84,7 @@
                   </div>
                   <span class="text-foreground font-medium">Bike</span>
                 </div>
-                <span class="text-muted-foreground">stats().toursByType.bike</span>
+                <span class="text-muted-foreground"> {{ stats().toursByType.bike }} </span>
               </div>
 
               <div class="flex items-center justify-between">
@@ -96,7 +96,7 @@
                   </div>
                   <span class="text-foreground font-medium">Hike</span>
                 </div>
-                <span class="text-muted-foreground">stats().toursByType.hike</span>
+                <span class="text-muted-foreground"> {{ stats().toursByType.hike }} </span>
               </div>
 
               <div class="flex items-center justify-between">
@@ -108,7 +108,7 @@
                   </div>
                   <span class="text-foreground font-medium">Running</span>
                 </div>
-                <span class="text-muted-foreground">stats().toursByType.running</span>
+                <span class="text-muted-foreground"> {{ stats().toursByType.running }} </span>
               </div>
 
               <div class="flex items-center justify-between">
@@ -120,7 +120,7 @@
                   </div>
                   <span class="text-foreground font-medium">Vacation</span>
                 </div>
-                <span class="text-muted-foreground">stats().toursByType.vacation</span>
+                <span class="text-muted-foreground"> {{ stats().toursByType.vacation }} </span>
               </div>
             </div>
           </div>
@@ -130,16 +130,18 @@
             <div class="px-5 py-4 border-b border-border">
               <h2 class="text-lg font-semibold text-foreground">Popular Tours</h2>
             </div>
+
+            @if (stats().popularTours.length === 0) {
               <div class="p-8 text-center">
                 <p class="text-muted-foreground">No tours with logs yet</p>
               </div>
+            } @else {
               <div class="divide-y divide-border">
-                  <a 
-                    class="flex items-center gap-4 px-5 py-3 hover:bg-secondary/30 transition-colors"
-                  >
+                @for (item of stats().popularTours; track item.tour.id) {
+                  <a class="flex items-center gap-4 px-5 py-3 hover:bg-secondary/30 transition-colors">
                     <div class="flex-1 min-w-0">
-                      <p class="font-medium text-foreground truncate">item.tour.name</p>
-                      <p class="text-sm text-muted-foreground">item.stats.totalLogs logs</p>
+                      <p class="font-medium text-foreground truncate"> {{ item.tour.name }} </p>
+                      <p class="text-sm text-muted-foreground"> {{ item.stats.totalLogs }} logs</p>
                     </div>
                     <div class="flex items-center gap-0.5">
                         <svg 
@@ -151,7 +153,9 @@
                         </svg>
                     </div>
                   </a>
+                }
               </div>
+            }
           </div>
 
           <!-- Recent Activity -->
@@ -163,17 +167,19 @@
                 <p class="text-muted-foreground">No recent activity</p>
               </div>
               <div class="divide-y divide-border">
+                @for (item of stats().recentLogs; track item.log.id) {
                   <div class="px-5 py-3">
                     <div class="flex items-center justify-between mb-1">
-                      <p class="font-medium text-foreground text-sm">Unknown Tour</p>
-                      <span class="text-xs text-muted-foreground">date:shortDate</span>
+                      <p class="font-medium text-foreground text-sm"> {{ item.tour.name }} </p>
+                      <span class="text-xs text-muted-foreground">{{ item.log.date | date:'shortDate' }} </span>
                     </div>
-                    <p class="text-sm text-muted-foreground truncate">'No comment'</p>
+                    <p class="text-sm text-muted-foreground truncate"> {{ item.log.comment || 'No comment' }}</p>
                     <div class="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                      <span>item.log.totalDistance km</span>
-                      <span>formatTime(item.log.totalTime)</span>
+                      <span>{{ item.log.totalDistance }} km</span>
+                      <span>{{ formatTime(item.log.totalTime) }} </span>
                     </div>
                   </div>
+                }
               </div>
           </div>
         </div>

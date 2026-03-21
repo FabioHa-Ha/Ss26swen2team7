@@ -1,1 +1,43 @@
-<p>tour-detail works!</p>
+@if (tour(); as t) {
+  <div class="p-6 space-y-6">
+
+    <h1 class="text-2xl font-bold">{{ t.name }}</h1>
+    <p>{{ t.from }} → {{ t.to }}</p>
+
+    <!-- Description -->
+    <div>
+      <h2 class="font-semibold">Description</h2>
+      <p>{{ t.description }}</p>
+    </div>
+
+    <!-- Logs -->
+    <div>
+      <h2 class="font-semibold mb-2">Tour Logs</h2>
+
+      @if (t.logs.length === 0) {
+        <p>No logs yet</p>
+      } @else {
+        @for (log of t.logs; track log.id) {
+          <div class="border p-3 rounded mb-2">
+            <p>{{ log.date | date }}</p>
+            <p>{{ log.totalDistance }} km</p>
+            <p>{{ formatTime(log.totalTime) }}</p>
+            <p>Rating: {{ log.rating }}</p>
+            <p>{{ log.comment }}</p>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Stats -->
+    @if (stats(); as s) {
+      <div>
+        <h2 class="font-semibold">Stats</h2>
+        <p>Total Logs: {{ s.totalLogs }}</p>
+        <p>Total Distance: {{ s.totalDistance }} km</p>
+        <p>Total Time: {{ formatTime(s.totalTime) }}</p>
+      </div>
+    }
+
+  </div>
+}

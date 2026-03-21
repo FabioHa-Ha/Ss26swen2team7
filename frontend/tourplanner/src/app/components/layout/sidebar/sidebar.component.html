@@ -64,10 +64,12 @@
             <span>All Types</span>
         </button>
 
+        @for (type of transportTypes; track type.value) {
           <button class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors">
-            <span class="w-5 h-5 shrink-0 flex items-center justify-center"></span>
-              <span>type.label</span>
+            <span class="w-5 h-5 shrink-0 flex items-center justify-center" [innerHTML]="type.icon"></span>
+              <span> {{ type.label }}</span>
           </button>
+        }
       </nav>
 
       <!-- Footer Actions -->
