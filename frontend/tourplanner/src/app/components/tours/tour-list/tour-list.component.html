@@ -5,9 +5,11 @@
           <div>
             <h1 class="text-2xl font-bold text-foreground">Tours</h1>
             <p class="text-sm text-muted-foreground mt-1">
-              tourService.filteredTours().length tours
-                <span> (filtered by tourService.filterType())</span>
-            </p>
+              {{ filteredTours().length }} tours
+              @if (filter() !== 'all') {
+                <span> (filtered by {{ filter() }})</span>
+              }
+              </p>
           </div>
           <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,6 +22,7 @@
 
       <!-- Tour Grid -->
       <div class="flex-1 overflow-auto p-6">
+        @if (filteredTours().length === 0) {
           <div class="flex flex-col items-center justify-center h-64 text-center">
             <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
               <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,9 +39,16 @@
               Create Tour
             </button>
           </div>
+        } @else {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              <!-- <app-tour-card /> -->
+            @for (tour of filteredTours(); track tour.id) { 
+              <app-tour-card 
+                [tour]="tour"
+                [stats]="{ popularity: 3, childFriendliness: 4, averageRating: 4.5, totalLogs: 10 }"
+              />
+            }
           </div>
+        }
       </div>
 
       <!-- Tour Form Dialog -->
