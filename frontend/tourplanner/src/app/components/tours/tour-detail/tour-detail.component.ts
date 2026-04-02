@@ -63,16 +63,18 @@ export class TourDetailComponent {
   readonly tour = computed(() => this.fakeTour());
 
   readonly stats = computed(() => {
-    const t = this.tour();
-    if (!t) return null;
+    const tour = this.tour();
+    if (!tour) {
+      return null;
+    }
 
     return {
       popularity: 4,
       childFriendliness: 3,
       averageRating: 4,
-      totalLogs: t.logs.length,
-      totalDistance: t.logs.reduce((sum, l) => sum + l.totalDistance, 0),
-      totalTime: t.logs.reduce((sum, l) => sum + l.totalTime, 0),
+      totalLogs: tour.logs.length,
+      totalDistance: tour.logs.reduce((sum, l) => sum + l.totalDistance, 0),
+      totalTime: tour.logs.reduce((sum, l) => sum + l.totalTime, 0),
     };
   });
 
