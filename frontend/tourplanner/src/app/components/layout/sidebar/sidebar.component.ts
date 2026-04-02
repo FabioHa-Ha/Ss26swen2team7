@@ -37,8 +37,10 @@ export class SidebarComponent {
     }
   ];
 
+  selectedType: string | 'all' = 'all';
+
   setFilter(type: string | 'all'): void {
-    // this.tourService.setFilter(type);
+    this.selectedType = type;
   }
 
   exportData(): void {

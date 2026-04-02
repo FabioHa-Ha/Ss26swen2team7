@@ -57,6 +57,8 @@
           </div>
 
         <button class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                (click)="setFilter('all')"
+                [class.bg-sidebar-accent]="selectedType === 'all'"
         >
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -65,7 +67,10 @@
         </button>
 
         @for (type of transportTypes; track type.value) {
-          <button class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors">
+          <button class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                  (click)="setFilter(type.value)"
+                  [class.bg-sidebar-accent]="selectedType === type.value"
+          >
             <span class="w-5 h-5 shrink-0 flex items-center justify-center" [innerHTML]="type.icon"></span>
               <span> {{ type.label }}</span>
           </button>
