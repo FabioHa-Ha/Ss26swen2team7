@@ -1,15 +1,24 @@
-<aside class="flex flex-col h-full bg-sidebar border-r border-sidebar-border transition-all duration-300">
+<aside 
+  class="flex flex-col h-full bg-sidebar border-r border-sidebar-border transition-all duration-300"
+  [class.w-64]="!collapsed"
+  [class.w-16]="collapsed"  
+>
       <!-- Header -->
       <div class="flex items-center justify-between p-4 border-b border-sidebar-border">
+
+        @if (!collapsed) {
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <svg class="w-5 h-5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
               </svg>
             </div>
-            <span class="font-semibold text-sidebar-foreground">Tour Planner</span>
+              <span class="font-semibold text-sidebar-foreground">Tour Planner</span>
           </div>
-        <button class="p-2 rounded-md hover:bg-sidebar-accent text-sidebar-foreground">
+        }
+        <button 
+          (click)="toggleSidebar()"
+          class="p-2 rounded-md hover:bg-sidebar-accent text-sidebar-foreground">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -27,18 +36,23 @@
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
           </svg>
-            <span>Dashboard</span>
+            @if (!collapsed) {
+              <span>Dashboard</span>
+            }
         </a>
 
         <a 
           routerLink="/tours"
           routerLinkActive="bg-sidebar-accent text-sidebar-accent-foreground"
+          [routerLinkActiveOptions]="{ exact: true }"
           class="flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
         >
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
           </svg>
+          @if (!collapsed) {
             <span>All Tours</span>
+          }
         </a>
 
         <a 
@@ -49,11 +63,15 @@
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
+          @if (!collapsed) {
             <span>Search</span>
+          }
         </a>
 
           <div class="pt-4 pb-2">
-            <span class="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Filter by Type</span>
+            @if (!collapsed) {
+              <span class="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Filter by Type</span>
+            }
           </div>
 
         <button class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
@@ -63,7 +81,9 @@
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
           </svg>
+          @if (!collapsed) {
             <span>All Types</span>
+          }
         </button>
 
         @for (type of transportTypes; track type.value) {
@@ -71,8 +91,25 @@
                   (click)="setFilter(type.value)"
                   [class.bg-sidebar-accent]="selectedType === type.value"
           >
-            <span class="w-5 h-5 shrink-0 flex items-center justify-center" [innerHTML]="type.icon"></span>
-              <span> {{ type.label }}</span>
+            <span class="w-5 h-5 shrink-0 flex items-center justify-center">
+              @switch (type.icon) {
+                @case ('bike') {
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+                }
+                @case ('hike') {
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                }
+                @case ('running') {
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                }
+                @case ('vacation') {
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                }
+              }
+            </span>
+              @if (!collapsed) {
+                <span> {{ type.label }}</span>
+              }
           </button>
         }
       </nav>
@@ -86,14 +123,18 @@
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-            <span>Export</span>
+            @if (!collapsed) {
+              <span>Export</span>
+            }
         </button>
 
         <label class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors cursor-pointer">
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-            <span>Import</span>
+            @if (!collapsed) {
+              <span>Import</span>
+            }
           <input type="file" class="hidden" accept=".json" (change)="importData($event)">
         </label>
 
@@ -104,7 +145,9 @@
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-            <span>Logout</span>
+            @if (!collapsed) {
+              <span>Logout</span>
+            }
         </button>
       </div>
     </aside>
