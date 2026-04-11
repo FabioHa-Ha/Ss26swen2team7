@@ -1,33 +1,39 @@
 @if (tour(); as t) {
-  <div class="p-6 space-y-6">
+  <div class="h-full flex flex-col">
 
-    <h1 class="text-2xl font-bold">{{ t.name }}</h1>
-    <p>{{ t.from }} → {{ t.to }}</p>
+    <!-- Header (fix burger overlap here) -->
+    <header class="px-6 py-4 pl-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+      <h1 class="text-2xl font-bold">{{ t.name }}</h1>
+      <p>{{ t.from }} → {{ t.to }}</p>
+    </header>
 
-    <!-- Description -->
-    <div>
-      <h2 class="font-semibold">Description</h2>
-      <p>{{ t.description }}</p>
-    </div>
+    <!-- Content -->
+    <div class="p-6 space-y-6 flex-1 overflow-auto">
 
-    <!-- Logs -->
-    <div>
-      <h2 class="font-semibold mb-2">Tour Logs</h2>
+      <!-- Description -->
+      <div>
+        <h2 class="font-semibold">Description</h2>
+        <p>{{ t.description }}</p>
+      </div>
 
-      @if (t.logs.length === 0) {
-        <p>No logs yet</p>
-      } @else {
-        @for (log of t.logs; track log.id) {
-          <div class="border p-3 rounded mb-2">
-            <p>{{ log.date | date }}</p>
-            <p>{{ log.totalDistance }} km</p>
-            <p>{{ formatTime(log.totalTime) }}</p>
-            <p>Rating: {{ log.rating }}</p>
-            <p>{{ log.comment }}</p>
-          </div>
+      <!-- Logs -->
+      <div>
+        <h2 class="font-semibold mb-2">Tour Logs</h2>
+
+        @if (t.logs.length === 0) {
+          <p>No logs yet</p>
+        } @else {
+          @for (log of t.logs; track log.id) {
+            <div class="border p-3 rounded mb-2">
+              <p>{{ log.date | date }}</p>
+              <p>{{ log.totalDistance }} km</p>
+              <p>{{ formatTime(log.totalTime) }}</p>
+              <p>Rating: {{ log.rating }}</p>
+              <p>{{ log.comment }}</p>
+            </div>
+          }
         }
-      }
-    </div>
+      </div>
 
     <!-- Stats -->
     @if (stats(); as s) {
@@ -38,6 +44,7 @@
         <p>Total Time: {{ formatTime(s.totalTime) }}</p>
       </div>
     }
+    </div>
 
   </div>
 }
