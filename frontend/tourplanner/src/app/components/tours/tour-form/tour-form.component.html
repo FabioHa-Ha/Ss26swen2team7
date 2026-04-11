@@ -1,20 +1,25 @@
 <div class="p-6">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-semibold text-foreground">
-          tour() ? 'Edit Tour' : 'Create New Tour'
+           {{ tour() ? 'Edit Tour' : 'Create New Tour' }}
         </h2>
-        <button class="p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+        <button 
+          class="p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          type="button"
+          (click)="cancel.emit()"
+          >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <form class="space-y-5">
+      <form (ngSubmit)="onSubmit()" class="space-y-5">
         <!-- Name -->
         <div class="space-y-2">
           <label for="name" class="block text-sm font-medium text-foreground">Tour Name</label>
           <input 
+            [(ngModel)]="formData.name"
             type="text" 
             id="name"
             name="name"
@@ -28,6 +33,7 @@
         <div class="space-y-2">
           <label for="description" class="block text-sm font-medium text-foreground">Description</label>
           <textarea 
+            [(ngModel)]="formData.description"
             id="description"
             name="description"
             rows="3"
@@ -40,21 +46,37 @@
         <div class="space-y-2">
           <label class="block text-sm font-medium text-foreground">Transport Type</label>
           <div class="grid grid-cols-4 gap-2">
+            @for (type of transportTypes; track type.value) {
               <button 
                 type="button"
                 class="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border hover:border-primary/50 transition-colors"
               >
-                <span></span>
-                <span class="text-xs font-medium">type.label</span>
+                @switch (type.value) {
+                  @case ('bike') {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+                  }
+                  @case ('hike') {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  }
+                  @case ('running') {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  }
+                  @case ('vacation') {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  }
+                }
+                <span class="text-xs font-medium">{{ type.label }}</span>
               </button>
+            }
           </div>
         </div>
 
         <!-- From / To -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
             <label for="from" class="block text-sm font-medium text-foreground">From</label>
             <input 
+              [(ngModel)]="formData.from"
               type="text" 
               id="from"
               name="from"
@@ -66,6 +88,7 @@
           <div class="space-y-2">
             <label for="to" class="block text-sm font-medium text-foreground">To</label>
             <input 
+              [(ngModel)]="formData.to"
               type="text" 
               id="to"
               name="to"
@@ -77,10 +100,11 @@
         </div>
 
         <!-- Distance / Time -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
             <label for="distance" class="block text-sm font-medium text-foreground">Distance (km)</label>
             <input 
+              [(ngModel)]="formData.distance"
               type="number" 
               id="distance"
               name="distance"
@@ -94,6 +118,7 @@
           <div class="space-y-2">
             <label for="time" class="block text-sm font-medium text-foreground">Estimated Time (minutes)</label>
             <input 
+              [(ngModel)]="formData.estimatedTime"
               type="number" 
               id="time"
               name="estimatedTime"
@@ -121,6 +146,7 @@
         <div class="flex justify-end gap-3 pt-4 border-t border-border">
           <button 
             type="button"
+            (click)="cancel.emit()"
             class="px-4 py-2 rounded-lg border border-border hover:bg-secondary transition-colors"
           >
             Cancel
@@ -129,7 +155,7 @@
             type="submit"
             class="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            tour() ? 'Save Changes' : 'Create Tour'
+            {{ tour() ? 'Save Changes' : 'Create Tour' }}
           </button>
         </div>
       </form>
