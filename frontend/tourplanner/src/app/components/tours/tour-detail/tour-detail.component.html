@@ -1,7 +1,7 @@
 @if (tour(); as t) {
   <div class="h-full flex flex-col">
 
-    <!-- Header (fix burger overlap here) -->
+    <!-- Header -->
     <header class="px-6 py-4 pl-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
       <h1 class="text-2xl font-bold">{{ t.name }}</h1>
       <p>{{ t.from }} → {{ t.to }}</p>
@@ -18,33 +18,79 @@
 
       <!-- Logs -->
       <div>
-        <h2 class="font-semibold mb-2">Tour Logs</h2>
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-semibold">Tour Logs</h2>
+          <button
+            (click)="openLogForm()"
+            class="px-3 py-1 text-sm rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            + Log hinzufügen
+          </button>
+        </div>
 
         @if (t.logs.length === 0) {
-          <p>No logs yet</p>
+          <p class="text-muted-foreground text-sm">Noch keine Logs vorhanden.</p>
         } @else {
           @for (log of t.logs; track log.id) {
-            <div class="border p-3 rounded mb-2">
-              <p>{{ log.date | date }}</p>
-              <p>{{ log.totalDistance }} km</p>
-              <p>{{ formatTime(log.totalTime) }}</p>
-              <p>Rating: {{ log.rating }}</p>
-              <p>{{ log.comment }}</p>
+            <div class="border border-border p-3 rounded-lg mb-2 space-y-1">
+              <div class="flex items-start justify-between">
+                <div class="space-y-1">
+                  <p class="text-sm text-muted-foreground">{{ log.date | date:'dd.MM.yyyy HH:mm' }}</p>
+                  <p class="text-sm">{{ log.totalDistance }} km &nbsp;·&nbsp; {{ formatTime(log.totalTime) }}</p>
+                  <p class="text-sm">Schwierigkeit: {{ log.difficulty }} &nbsp;·&nbsp; Bewertung: {{ log.rating }}/5</p>
+                  @if (log.comment) {
+                    <p class="text-sm italic text-muted-foreground">{{ log.comment }}</p>
+                  }
+                </div>
+                <div class="flex gap-2 ml-4 shrink-0">
+                  <button
+                    (click)="editLog(log)"
+                    class="p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                    title="Bearbeiten"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                  </button>
+                  <button
+                    (click)="deleteLog(log)"
+                    class="p-1.5 rounded hover:bg-red-100 text-muted-foreground hover:text-red-600 transition-colors"
+                    title="Löschen"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           }
         }
       </div>
 
-    <!-- Stats -->
-    @if (stats(); as s) {
-      <div>
-        <h2 class="font-semibold">Stats</h2>
-        <p>Total Logs: {{ s.totalLogs }}</p>
-        <p>Total Distance: {{ s.totalDistance }} km</p>
-        <p>Total Time: {{ formatTime(s.totalTime) }}</p>
-      </div>
-    }
+      <!-- Stats -->
+      @if (stats(); as s) {
+        <div>
+          <h2 class="font-semibold">Stats</h2>
+          <p>Total Logs: {{ s.totalLogs }}</p>
+          <p>Total Distance: {{ s.totalDistance }} km</p>
+          <p>Total Time: {{ formatTime(s.totalTime) }}</p>
+        </div>
+      }
     </div>
 
   </div>
+
+  <!-- Log Form Modal -->
+  @if (showLogForm()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="bg-card rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <app-tour-log-form
+          [log]="editingLog()"
+          (save)="saveLog($event)"
+          (cancel)="closeLogForm()"
+        />
+      </div>
+    </div>
+  }
 }

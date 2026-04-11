@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal, computed } from '@angular/core';
+import { TourLogFormComponent } from '../tour-log-form/tour-log-form.component';
 
 interface TourLog {
   id: string;
@@ -28,11 +29,14 @@ interface Tour {
 
 @Component({
   selector: 'app-tour-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, TourLogFormComponent],
   templateUrl: './tour-detail.component.html',
   styleUrl: './tour-detail.component.css',
 })
 export class TourDetailComponent {
+  showLogForm = signal(false);
+  editingLog = signal<TourLog | null>(null);
+
    // fake data (replace later with service)
   private readonly fakeTour = signal<Tour>({
     id: '1',
@@ -87,10 +91,44 @@ export class TourDetailComponent {
     return `${hours}h ${mins}m`;
   }
 
-  // dummy handlers (no logic yet)
-  openLogForm() {}
-  editLog(log: TourLog) {}
-  closeLogForm() {}
-  saveLog(data: Partial<TourLog>) {}
-  deleteLog(log: TourLog) {}
+  openLogForm() {
+    this.editingLog.set(null);
+    this.showLogForm.set(true);
+  }
+
+  editLog(log: TourLog) {
+    this.editingLog.set(log);
+    this.showLogForm.set(true);
+  }
+
+  closeLogForm() {
+    this.showLogForm.set(false);
+    this.editingLog.set(null);
+  }
+
+  saveLog(data: Partial<TourLog>) {
+    const editing = this.editingLog();
+    if (editing) {
+      this.fakeTour.update(t => ({
+        ...t,
+        logs: t.logs.map(l => l.id === editing.id ? { ...l, ...data } as TourLog : l)
+      }));
+    } else {
+      const newLog: TourLog = {
+        id: Date.now().toString(),
+        date: data.date ?? new Date(),
+        totalDistance: data.totalDistance ?? 0,
+        totalTime: data.totalTime ?? 0,
+        difficulty: data.difficulty ?? 1,
+        rating: data.rating ?? 1,
+        comment: data.comment ?? '',
+      };
+      this.fakeTour.update(t => ({ ...t, logs: [...t.logs, newLog] }));
+    }
+    this.closeLogForm();
+  }
+
+  deleteLog(log: TourLog) {
+    this.fakeTour.update(t => ({ ...t, logs: t.logs.filter(l => l.id !== log.id) }));
+  }
 }

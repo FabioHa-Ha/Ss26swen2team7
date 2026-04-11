@@ -1,0 +1,150 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-semibold text-foreground">
+      {{ log() ? 'Log bearbeiten' : 'Neues Log erstellen' }}
+    </h2>
+    <button
+      class="p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+      type="button"
+      (click)="cancel.emit()"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="space-y-5">
+
+    <!-- Datum -->
+    <div class="space-y-1">
+      <label for="logDate" class="block text-sm font-medium text-foreground">
+        Datum &amp; Uhrzeit <span class="text-red-500">*</span>
+      </label>
+      <input
+        [(ngModel)]="formData.date"
+        type="datetime-local"
+        id="logDate"
+        name="date"
+        [class.border-red-500]="submitted && !formData.date"
+        class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+      @if (submitted && !formData.date) {
+        <p class="text-red-500 text-xs mt-1">Datum ist erforderlich.</p>
+      }
+    </div>
+
+    <!-- Kommentar -->
+    <div class="space-y-1">
+      <label for="logComment" class="block text-sm font-medium text-foreground">Kommentar</label>
+      <textarea
+        [(ngModel)]="formData.comment"
+        id="logComment"
+        name="comment"
+        rows="3"
+        class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+        placeholder="Wie war die Tour?"
+      ></textarea>
+    </div>
+
+    <!-- Schwierigkeitsgrad -->
+    <div class="space-y-1">
+      <label for="logDifficulty" class="block text-sm font-medium text-foreground">
+        Schwierigkeitsgrad <span class="text-red-500">*</span>
+      </label>
+      <select
+        [(ngModel)]="formData.difficulty"
+        id="logDifficulty"
+        name="difficulty"
+        [class.border-red-500]="submitted && (formData.difficulty < 1 || formData.difficulty > 5)"
+        class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+        @for (option of difficultyOptions; track option.value) {
+          <option [value]="option.value">{{ option.value }} – {{ option.label }}</option>
+        }
+      </select>
+      @if (submitted && (formData.difficulty < 1 || formData.difficulty > 5)) {
+        <p class="text-red-500 text-xs mt-1">Schwierigkeitsgrad muss zwischen 1 und 5 liegen.</p>
+      }
+    </div>
+
+    <!-- Gesamtstrecke / Gesamtzeit -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="space-y-1">
+        <label for="logDistance" class="block text-sm font-medium text-foreground">
+          Gesamtstrecke (km) <span class="text-red-500">*</span>
+        </label>
+        <input
+          [(ngModel)]="formData.totalDistance"
+          type="number"
+          id="logDistance"
+          name="totalDistance"
+          min="1"
+          step="0.1"
+          [class.border-red-500]="submitted && formData.totalDistance <= 0"
+          class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          placeholder="0"
+        >
+        @if (submitted && formData.totalDistance <= 0) {
+          <p class="text-red-500 text-xs mt-1">Gesamtstrecke muss größer als 0 sein.</p>
+        }
+      </div>
+      <div class="space-y-1">
+        <label for="logTime" class="block text-sm font-medium text-foreground">
+          Gesamtzeit (Minuten) <span class="text-red-500">*</span>
+        </label>
+        <input
+          [(ngModel)]="formData.totalTime"
+          type="number"
+          id="logTime"
+          name="totalTime"
+          min="1"
+          [class.border-red-500]="submitted && formData.totalTime <= 0"
+          class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          placeholder="0"
+        >
+        @if (submitted && formData.totalTime <= 0) {
+          <p class="text-red-500 text-xs mt-1">Gesamtzeit muss größer als 0 sein.</p>
+        }
+      </div>
+    </div>
+
+    <!-- Bewertung -->
+    <div class="space-y-1">
+      <label for="logRating" class="block text-sm font-medium text-foreground">
+        Bewertung (1–5) <span class="text-red-500">*</span>
+      </label>
+      <input
+        [(ngModel)]="formData.rating"
+        type="number"
+        id="logRating"
+        name="rating"
+        min="1"
+        max="5"
+        [class.border-red-500]="submitted && (formData.rating < 1 || formData.rating > 5)"
+        class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+        placeholder="1–5"
+      >
+      @if (submitted && (formData.rating < 1 || formData.rating > 5)) {
+        <p class="text-red-500 text-xs mt-1">Bewertung muss zwischen 1 und 5 liegen.</p>
+      }
+    </div>
+
+    <!-- Actions -->
+    <div class="flex justify-end gap-3 pt-4 border-t border-border">
+      <button
+        type="button"
+        (click)="cancel.emit()"
+        class="px-4 py-2 rounded-lg border border-border hover:bg-secondary transition-colors"
+      >
+        Abbrechen
+      </button>
+      <button
+        type="submit"
+        class="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ log() ? 'Speichern' : 'Log erstellen' }}
+      </button>
+    </div>
+  </form>
+</div>
