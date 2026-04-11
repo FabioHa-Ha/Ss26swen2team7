@@ -11,12 +11,9 @@
               }
               </p>
           </div>
-          <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
+          <app-button variant="primary" icon="plus" (click)="openCreateForm()">
             Add Tour
-          </button>
+          </app-button>
         </div>
       </header>
 
@@ -31,13 +28,9 @@
             </div>
             <h3 class="text-lg font-medium text-foreground mb-1">No tours found</h3>
             <p class="text-muted-foreground mb-4">Get started by creating your first tour</p>
-            <button class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
+            <app-button variant="primary" icon="plus" (click)="openCreateForm()">
               Create Tour
-            </button>
+            </app-button>
           </div>
         } @else {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -52,11 +45,15 @@
       </div>
 
       <!-- Tour Form Dialog -->
-        <!-- <div class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"> -->
-          <!-- <div class="bg-card border border-border rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-auto"> -->
-            <!-- <app-tour-form /> -->
-          <!-- </div> -->
-        <!-- </div> -->
+      @if (showForm()) {
+        <div class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div class="bg-card border border-border rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+            <app-tour-form
+              (cancel)="closeForm()"
+            />
+          </div>
+        </div>
+      }
 
       <!-- Delete Confirmation Dialog -->
         <!-- <div class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">

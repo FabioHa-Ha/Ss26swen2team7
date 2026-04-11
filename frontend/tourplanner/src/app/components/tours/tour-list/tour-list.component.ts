@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { TourCardComponent } from '../tour-card/tour-card.component';
 import { TourFormComponent } from '../tour-form/tour-form.component';
+import { ButtonComponent } from '../../shared/ui/button/button.component';
 
 interface Tour {
   id: number;
@@ -16,11 +17,23 @@ interface Tour {
 
 @Component({
   selector: 'app-tour-list',
-  imports: [CommonModule, TourCardComponent, TourFormComponent],
+  imports: [CommonModule, TourCardComponent, TourFormComponent, ButtonComponent],
   templateUrl: './tour-list.component.html',
   styleUrl: './tour-list.component.css',
 })
 export class TourListComponent {
+  readonly showForm = signal(false);
+  readonly editingTour = signal<Tour | null>(null);
+
+  openCreateForm(): void {
+    this.editingTour.set(null);
+    this.showForm.set(true);
+  }
+
+  closeForm(): void {
+    this.showForm.set(false);
+  }
+
   // fake data
   readonly tours = signal<Tour[]>([
     {
