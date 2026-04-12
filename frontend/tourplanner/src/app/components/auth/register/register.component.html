@@ -33,8 +33,9 @@
 
             <div class="space-y-2">
               <label for="email" class="block text-sm font-medium text-foreground">Email</label>
-              <input 
-                type="email" 
+              <input
+                [(ngModel)]="email"
+                type="email"
                 id="email"
                 name="email"
                 required
@@ -59,15 +60,18 @@
 
             <div class="space-y-2">
               <label for="confirmPassword" class="block text-sm font-medium text-foreground">Confirm Password</label>
-              <input 
-                type="password" 
+              <input
+                [(ngModel)]="confirmPassword"
+                type="password"
                 id="confirmPassword"
                 name="confirmPassword"
                 required
                 class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 placeholder="Confirm your password"
               >
-                <!-- <p class="text-sm text-destructive">Passwords don't match</p> -->
+              @if (passwordMismatch) {
+                <p class="text-sm text-destructive">Passwords don't match</p>
+              }
             </div>
 
             <button 

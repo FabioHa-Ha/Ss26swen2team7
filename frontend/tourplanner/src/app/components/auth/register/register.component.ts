@@ -11,13 +11,19 @@ import { FormsModule } from '@angular/forms';
 })
 export class RegisterComponent {
   username = '';
+  email = '';
   password = '';
+  confirmPassword = '';
+
+  get passwordMismatch(): boolean {
+    return this.confirmPassword.length > 0 && this.password !== this.confirmPassword;
+  }
 
   constructor (private authService: AuthService, private router: Router) {}
 
-
   onSubmit(): void {
-    this.authService.register({ username: this.username, password: this.password }).subscribe({
+    if (this.password !== this.confirmPassword) return;
+    this.authService.register({ username: this.username, email: this.email, password: this.password }).subscribe({
       next: () => this.router.navigate(['/login']),
       error: (err) => console.error('Registration failed', err)
     });

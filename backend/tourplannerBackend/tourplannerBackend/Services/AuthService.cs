@@ -29,7 +29,8 @@ namespace tourplannerBackend.Services
             {
                 Id = 0,
                 Username = dto.Username,
-                Password = HashPassword(dto.Password)
+                Password = HashPassword(dto.Password),
+                Email = dto.Email
             };
 
             var created = await _userRepository.CreateAsync(user);
@@ -43,7 +44,8 @@ namespace tourplannerBackend.Services
 
         public async Task<AuthResponseDto?> LoginAsync(UserLoginDto dto)
         {
-            var user = await _userRepository.GetByUsernameAsync(dto.Username);
+            var user = await _userRepository.GetByUsernameAsync(dto.Username)
+                    ?? await _userRepository.GetByEmailAsync(dto.Username);
             if (user == null || !VerifyPassword(dto.Password, user.Password))
                 return null;
 
