@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, effect } from '@angular/core';
 import { TourLogFormComponent } from '../tour-log-form/tour-log-form.component';
 import { ActivatedRoute } from '@angular/router';
 import { TourService } from '../../../services/tour.service';
@@ -63,7 +63,24 @@ export class TourDetailComponent implements OnInit {
     };
   });
 
-  constructor(private route: ActivatedRoute, private tourService: TourService, private tourLogService: TourLogService) {}
+  readonly logCountLabel = computed(() => {
+    const count = this._logs().length;
+    if (count === 0) {
+      return 'No logs yet';
+    }
+
+    if (count === 1) {
+      return '1 log';
+    }
+    return `${count} logs`;
+  })
+
+  constructor(private route: ActivatedRoute, private tourService: TourService, private tourLogService: TourLogService) {
+    effect(() => {
+      const count = this._logs().length;
+      console.log(`[Observer] Log count changed: ${count}`);
+    });
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
