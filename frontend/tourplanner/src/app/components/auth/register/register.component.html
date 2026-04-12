@@ -13,7 +13,7 @@
 
         <!-- Form -->
         <div class="bg-card border border-border rounded-xl p-6">
-          <form class="space-y-4">
+          <form (ngSubmit)="onSubmit()" class="space-y-4">
               <!-- <div class="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
                 authService.error()
               </div> -->
@@ -21,6 +21,7 @@
             <div class="space-y-2">
               <label for="name" class="block text-sm font-medium text-foreground">Name</label>
               <input 
+                [(ngModel)]="username"
                 type="text" 
                 id="name"
                 name="name"
@@ -45,6 +46,7 @@
             <div class="space-y-2">
               <label for="password" class="block text-sm font-medium text-foreground">Password</label>
               <input 
+                [(ngModel)]="password"
                 type="password" 
                 id="password"
                 name="password"
