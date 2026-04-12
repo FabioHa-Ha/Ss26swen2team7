@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, effect } from '@angular/core';
 import { TourService } from '../../services/tour.service';
 import { TourLogService } from '../../services/tour-log.services';
 import { map } from 'rxjs';
@@ -24,7 +24,16 @@ export class DashboardComponent implements OnInit{
     recentLogs: [] as any[]
   });
 
-  constructor(private tourService: TourService, private tourLogService: TourLogService) {}
+  constructor(private tourService: TourService, private tourLogService: TourLogService) {
+    effect(() => {
+      const current = this.stats();
+      console.log(`[Effect] Dashboard stats updated:`, {
+        tours: current.totalTours,
+        logs: current.totalLogs,
+        distance: current.totalDistance
+      });
+    });
+  }
 
   ngOnInit(): void {
     this.tourService.getMyTours().subscribe({
