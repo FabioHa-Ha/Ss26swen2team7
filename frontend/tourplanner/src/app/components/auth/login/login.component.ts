@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,10 +10,19 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  email = '';
+  username = '';
   password = '';
 
+  constructor(private authService: AuthService, private router: Router) {}
+
+  onLogin(username: string, password: string): void {
+    this.authService.login( {username, password }).subscribe({
+      next: () => this.router.navigate(['/tours/dashboard']),
+      error: (err) => console.error('Login failed', err)
+    });
+  }
+
   onSubmit(): void {
-    console.log(this.email, this.password);
+    this.onLogin(this.username, this.password);
   }
 }
