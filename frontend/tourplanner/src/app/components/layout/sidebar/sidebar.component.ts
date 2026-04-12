@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,8 +10,8 @@ import { RouterModule } from '@angular/router';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
-  // readonly collapsed = input(false);
-  // readonly toggleCollapse = output<void>();
+
+  constructor(private authService: AuthService, private router: Router) {}
   
   someTours = [
     {
@@ -57,13 +58,6 @@ export class SidebarComponent {
   toggleSidebar() {
     this.collapsed = !this.collapsed; // desktop only
   }
-
-  // toggleSidebar() {
-  //   this.collapsed = !this.collapsed;
-  // }
-
-  // readonly tourService = inject(TourService);
-  // private readonly authService = inject(AuthService);
 
   readonly transportTypes: { value: string; label: string; icon: string }[] = [
     { 
@@ -136,6 +130,7 @@ export class SidebarComponent {
   }
 
   logout(): void {
-    // this.authService.logout();
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
