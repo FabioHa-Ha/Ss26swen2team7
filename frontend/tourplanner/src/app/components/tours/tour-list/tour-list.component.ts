@@ -46,39 +46,45 @@ export class TourListComponent implements OnInit {
     this.showForm.set(false);
   }
 
-  // fake data
-  // readonly tours = signal<Tour[]>([
-  //   {
-  //     id: 1,
-  //     name: 'Wien Rundgang',
-  //     transportType: 'hike',
-  //     description: 'Schöner Spaziergang durch die Innenstadt',
-  //     from: 'Stephansplatz',
-  //     to: 'Schönbrunn',
-  //     distance: 8.5,
-  //     estimatedTime: 120
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Donau Radweg',
-  //     transportType: 'bike',
-  //     description: 'Entlang der Donau',
-  //     from: 'Krems',
-  //     to: 'Melk',
-  //     distance: 36,
-  //     estimatedTime: 150
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Alpen Tour',
-  //     transportType: 'hike',
-  //     description: 'Bergwanderung mit Aussicht',
-  //     from: 'Talstation',
-  //     to: 'Gipfel',
-  //     distance: 12,
-  //     estimatedTime: 300
-  //   }
-  // ]);
+  onSaveTour(formData: any): void {
+    const editing = this.editingTour();
+
+    if (editing) {
+      // UPDATE existing tour
+      this.tourService.update(editing.id, formData).subscribe({
+        next: (updated) => {
+          this.tours.update(tours => tours.map(t => t.id === updated.id ? updated : t));
+          this.closeForm();
+        },
+        error: (err) => console.error('Failed to update tour', err)
+      });
+    } else {
+      // CREATE new tour
+      this.tourService.create(formData).subscribe({
+        next: (created) => {
+          this.tours.update(tours => [...tours, created]);
+          this.closeForm();
+        },
+        error: (err) => console.error('Failed to create tour', err)
+      });
+    }
+  }
+
+  onEditTour(tour: any): void {
+    this.editingTour.set(tour);
+    this.showForm.set(true);
+  }
+
+  onDeleteTour(tour: any): void {
+    if (!confirm(`Delete "${tour.name}"?`)) {
+      return;
+    }
+
+    this.tourService.delete(tour.id).subscribe({
+      next: () => this.tours.update(tours => tours.filter(t => t.id !== tour.id)),
+      error: (err) => console.error('Failed to delete tour', err)
+    });
+  }
 
   readonly filter = signal<'all' | string>('all');
 

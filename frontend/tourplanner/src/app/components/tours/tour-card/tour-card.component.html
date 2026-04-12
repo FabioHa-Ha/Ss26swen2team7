@@ -1,115 +1,120 @@
-<article class="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5">
-      <!-- Header with transport type badge -->
-      <div class="p-4 pb-3">
-        <div class="flex items-start justify-between gap-2 mb-3">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-                [ngClass]="getTypeBadgeClasses()">
-            <span class="w-3.5 h-3.5 flex items-center justify-center">
-              @switch (tour().transportType) {
-                @case ('bike') {
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <circle cx="5.5" cy="17.5" r="3.5"/>
-                    <circle cx="18.5" cy="17.5" r="3.5"/>
-                    <path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/>
-                  </svg>
-                }
-                @case ('hike') {
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                  </svg>
-                }
-                @case ('running') {
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                  </svg>
-                }
-                @case ('vacation') {
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                }
+<article 
+  class="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-all duration-200 hover:shadow-lg hover:shadow-primary/5"
+  [routerLink]="['/tours', tour().id]"
+  >
+    <!-- Header with transport type badge -->
+    <div class="p-4 pb-3">
+      <div class="flex items-start justify-between gap-2 mb-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getTypeBadgeClasses()">
+          <span class="w-3.5 h-3.5 flex items-center justify-center">
+            @switch (tour().transportTypeName?.toLowerCase()) {
+              @case ('bike') {
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="5.5" cy="17.5" r="3.5"/>
+                  <circle cx="18.5" cy="17.5" r="3.5"/>
+                  <path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/>
+                </svg>
               }
-            </span>
-
-            {{ tour().transportType | titlecase }}
+              @case ('hike') {
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              }
+              @case ('running') {
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              }
+              @case ('vacation') {
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              }
+            }
           </span>
-          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button 
-              class="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-              title="Edit tour"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </button>
-            <button 
-              class="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-              title="Delete tour"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          </div>
-        </div>
 
-        <h3 class="font-semibold text-card-foreground text-lg mb-1 line-clamp-1">{{ tour().name }}</h3>
-        <p class="text-sm text-muted-foreground line-clamp-2 mb-3">{{ tour().description }}</p>
-
-        <!-- Route info -->
-        <div class="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-          <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span class="truncate">{{ tour().from }} → {{ tour().to }}</span>
-        </div>
-
-        <!-- Stats row -->
-        <div class="flex items-center gap-4 text-sm">
-          <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          {{ tour().transportTypeName | titlecase }}
+        </span>
+        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button 
+            (click)="onEdit($event)"
+            class="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+            title="Edit tour"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            <span class="text-foreground font-medium">{{ tour().distance }} km</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </button>
+          <button 
+            (click)="onDelete($event)"
+            class="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+            title="Delete tour"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            <span class="text-foreground font-medium">{{ formatTime(tour().estimatedTime) }}</span>
-          </div>
+          </button>
         </div>
       </div>
 
-      <!-- Footer with computed stats -->
-        <div class="px-4 py-3 bg-secondary/30 border-t border-border flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <!-- Popularity -->
-            <div class="flex items-center gap-1" title="Popularity">
-              <svg class="w-4 h-4 text-warning" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-              </svg>
-              <span class="text-xs font-medium">{{ stats()!.popularity }}/5</span>
-            </div>
-            <!-- Child-friendly -->
-            <div class="flex items-center gap-1" title="Child-friendliness">
-              <svg class="w-4 h-4 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span class="text-xs font-medium">{{ stats()!.childFriendliness }}/5</span>
-            </div>
-            <!-- Rating -->
-              <div class="flex items-center gap-1" title="Average rating">
-                <svg class="w-4 h-4 text-chart-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-                <span class="text-xs font-medium">{{ stats()!.averageRating }}</span>
-              </div>
-          </div>
-          <span class="text-xs text-muted-foreground">{{ stats()!.totalLogs }} logs</span>
+      <h3 class="font-semibold text-card-foreground text-lg mb-1 line-clamp-1">{{ tour().name }}</h3>
+      <p class="text-sm text-muted-foreground line-clamp-2 mb-3">{{ tour().description }}</p>
+
+      <!-- Route info -->
+      <div class="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+        <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span class="truncate">{{ tour().fromLocation }} → {{ tour().toLocation }}</span>
+      </div>
+
+      <!-- Stats row -->
+      <div class="flex items-center gap-4 text-sm">
+        <div class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+          <span class="text-foreground font-medium">{{ tour().distance }} km</span>
         </div>
-    </article>
+        <div class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-foreground font-medium">{{ formatTime(tour().estimatedTime) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer with computed stats -->
+      <div class="px-4 py-3 bg-secondary/30 border-t border-border flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <!-- Popularity -->
+          <div class="flex items-center gap-1" title="Popularity">
+            <svg class="w-4 h-4 text-warning" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+            </svg>
+            <span class="text-xs font-medium">{{ stats()!.popularity }}/5</span>
+          </div>
+          <!-- Child-friendly -->
+          <div class="flex items-center gap-1" title="Child-friendliness">
+            <svg class="w-4 h-4 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-xs font-medium">{{ stats()!.childFriendliness }}/5</span>
+          </div>
+          <!-- Rating -->
+            <div class="flex items-center gap-1" title="Average rating">
+              <svg class="w-4 h-4 text-chart-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              <span class="text-xs font-medium">{{ stats()!.averageRating }}</span>
+            </div>
+        </div>
+        <span class="text-xs text-muted-foreground">{{ stats()!.totalLogs }} logs</span>
+      </div>
+  </article>

@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit } from '@angular/core';
 import { TourLogFormComponent } from '../tour-log-form/tour-log-form.component';
+import { ActivatedRoute } from '@angular/router';
+import { TourService } from '../../../services/tour.service';
+import { TourLogService } from '../../../services/tour-log.services';
 
 interface TourLog {
   id: string;
@@ -33,56 +36,47 @@ interface Tour {
   templateUrl: './tour-detail.component.html',
   styleUrl: './tour-detail.component.css',
 })
-export class TourDetailComponent {
+export class TourDetailComponent implements OnInit {
   showLogForm = signal(false);
-  editingLog = signal<TourLog | null>(null);
+  editingLog = signal<any>(null);
 
-   // fake data (replace later with service)
-  private readonly fakeTour = signal<Tour>({
-    id: '1',
-    name: 'Vienna City Ride',
-    from: 'Vienna',
-    to: 'Danube Island',
-    description: 'A nice bike ride through Vienna.',
-    routeInformation: 'Start in city center → follow Danube canal → reach island.',
-    transportType: 'bike',
-    distance: 12,
-    estimatedTime: 90,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    logs: [
-      {
-        id: 'l1',
-        date: new Date(),
-        totalDistance: 12,
-        totalTime: 80,
-        difficulty: 3,
-        rating: 4,
-        comment: 'Nice weather!'
-      }
-    ]
-  });
+  private readonly _tour = signal<any>(null);
+  private readonly _logs = signal<any[]>([]);
 
-  // mimic original API
-  readonly tour = computed(() => this.fakeTour());
-
-  readonly stats = computed(() => {
-    const tour = this.tour();
-    if (!tour) {
+  readonly tour = computed(() => {
+    const t = this._tour();
+    if (!t) {
       return null;
     }
+    return { ...t, logs: this._logs() };
+  });
 
+  readonly stats = computed(() => {
+    const logs = this._logs();
+    if (!logs.length) {
+      return null;
+    }
     return {
-      popularity: 4,
-      childFriendliness: 3,
-      averageRating: 4,
-      totalLogs: tour.logs.length,
-      totalDistance: tour.logs.reduce((sum, l) => sum + l.totalDistance, 0),
-      totalTime: tour.logs.reduce((sum, l) => sum + l.totalTime, 0),
+      totalLogs: logs.length,
+      totalDistance: logs.reduce((sum, l) => sum + (l.totalDistance ?? 0), 0),
+      totalTime: logs.reduce((sum, l) => sum + (l.totalTime ?? 0), 0),
     };
   });
 
-  // keep utility function
+  constructor(private route: ActivatedRoute, private tourService: TourService, private tourLogService: TourLogService) {}
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.tourService.getById(id).subscribe({
+      next: (tour) => this._tour.set(tour),
+      error: (err) => console.error('Failed to load tour', err)
+    });
+    this.tourLogService.getByTour(id).subscribe({
+      next: (logs) => this._logs.set(logs),
+      error: (err) => console.error('Failed to load logs', err)
+    });
+  }
+
   formatTime(minutes: number): string {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -106,29 +100,37 @@ export class TourDetailComponent {
     this.editingLog.set(null);
   }
 
-  saveLog(data: Partial<TourLog>) {
+  saveLog(data: any) {
     const editing = this.editingLog();
+    const tourId = this._tour()?.id;
+
     if (editing) {
-      this.fakeTour.update(t => ({
-        ...t,
-        logs: t.logs.map(l => l.id === editing.id ? { ...l, ...data } as TourLog : l)
-      }));
+      this.tourLogService.update(editing.id, data).subscribe({
+        next: (updated) => {
+          this._logs.update(logs => logs.map(l => l.id === updated.id ? updated : l));
+          this.closeLogForm();
+        },
+        error: (err) => console.error('Failed to update log', err)
+      });
     } else {
-      const newLog: TourLog = {
-        id: Date.now().toString(),
-        date: data.date ?? new Date(),
-        totalDistance: data.totalDistance ?? 0,
-        totalTime: data.totalTime ?? 0,
-        difficulty: data.difficulty ?? 1,
-        rating: data.rating ?? 1,
-        comment: data.comment ?? '',
-      };
-      this.fakeTour.update(t => ({ ...t, logs: [...t.logs, newLog] }));
+      this.tourLogService.create({ ...data, tourId }).subscribe({
+        next: (created) => {
+          this._logs.update(logs => [...logs, created]);
+          this.closeLogForm();
+        },
+        error: (err) => console.error('Failed to create log', err)
+      });
     }
-    this.closeLogForm();
   }
 
-  deleteLog(log: TourLog) {
-    this.fakeTour.update(t => ({ ...t, logs: t.logs.filter(l => l.id !== log.id) }));
+  deleteLog(log: any) {
+    if (!confirm('Delete this log?')) {
+      return;
+    }
+
+    this.tourLogService.delete(log.id).subscribe({
+      next: () => this._logs.update(logs => logs.filter(l => l.id !== log.id)),
+      error: (err) => console.error('Failed to delete log', err)
+    });
   }
 }

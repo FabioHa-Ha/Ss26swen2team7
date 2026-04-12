@@ -4,19 +4,58 @@
     <!-- Header -->
     <header class="px-6 py-4 pl-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
       <h1 class="text-2xl font-bold">{{ t.name }}</h1>
-      <p>{{ t.from }} → {{ t.to }}</p>
+      <p class="text-muted-foreground">{{ t.fromLocation }} → {{ t.toLocation }}</p>
     </header>
 
     <!-- Content -->
     <div class="p-6 space-y-6 flex-1 overflow-auto">
 
-      <!-- Description -->
-      <div>
-        <h2 class="font-semibold">Description</h2>
-        <p>{{ t.description }}</p>
+      <!-- Tour Attributes -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-card border border-border rounded-lg p-4">
+          <p class="text-xs text-muted-foreground mb-1">Transport</p>
+          <p class="font-medium">{{ t.transportTypeName }}</p>
+        </div>
+        <div class="bg-card border border-border rounded-lg p-4">
+          <p class="text-xs text-muted-foreground mb-1">Distance</p>
+          <p class="font-medium">{{ t.distance }} km</p>
+        </div>
+        <div class="bg-card border border-border rounded-lg p-4">
+          <p class="text-xs text-muted-foreground mb-1">Est. Time</p>
+          <p class="font-medium">{{ formatTime(t.estimatedTime) }}</p>
+        </div>
+        <div class="bg-card border border-border rounded-lg p-4">
+          <p class="text-xs text-muted-foreground mb-1">Total Logs</p>
+          <p class="font-medium">{{ t.logs.length }}</p>
+        </div>
       </div>
 
-      <!-- Logs -->
+      <!-- Map Placeholder -->
+      <div class="w-full h-64 bg-muted rounded-lg flex items-center justify-center border border-border">
+        <div class="text-center text-muted-foreground">
+          <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>
+          <p class="text-sm font-medium">Map View</p>
+          <p class="text-xs">{{ t.fromLocation }} → {{ t.toLocation }}</p>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <h2 class="font-semibold mb-1">Description</h2>
+        <p class="text-muted-foreground text-sm">{{ t.description }}</p>
+      </div>
+
+      <!-- Route Information -->
+      @if (t.routeInformation) {
+        <div>
+          <h2 class="font-semibold mb-1">Route Information</h2>
+          <p class="text-muted-foreground text-sm">{{ t.routeInformation }}</p>
+        </div>
+      }
+
+      <!-- Tour Logs -->
       <div>
         <div class="flex items-center justify-between mb-2">
           <h2 class="font-semibold">Tour Logs</h2>
@@ -24,12 +63,12 @@
             (click)="openLogForm()"
             class="px-3 py-1 text-sm rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
-            + Log hinzufügen
+            + Add Log
           </button>
         </div>
 
         @if (t.logs.length === 0) {
-          <p class="text-muted-foreground text-sm">Noch keine Logs vorhanden.</p>
+          <p class="text-muted-foreground text-sm">No logs yet.</p>
         } @else {
           @for (log of t.logs; track log.id) {
             <div class="border border-border p-3 rounded-lg mb-2 space-y-1">
@@ -37,26 +76,18 @@
                 <div class="space-y-1">
                   <p class="text-sm text-muted-foreground">{{ log.date | date:'dd.MM.yyyy HH:mm' }}</p>
                   <p class="text-sm">{{ log.totalDistance }} km &nbsp;·&nbsp; {{ formatTime(log.totalTime) }}</p>
-                  <p class="text-sm">Schwierigkeit: {{ log.difficulty }} &nbsp;·&nbsp; Bewertung: {{ log.rating }}/5</p>
+                  <p class="text-sm">Difficulty: {{ log.difficulty }} &nbsp;·&nbsp; Rating: {{ log.rating }}/5</p>
                   @if (log.comment) {
                     <p class="text-sm italic text-muted-foreground">{{ log.comment }}</p>
                   }
                 </div>
                 <div class="flex gap-2 ml-4 shrink-0">
-                  <button
-                    (click)="editLog(log)"
-                    class="p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-                    title="Bearbeiten"
-                  >
+                  <button (click)="editLog(log)" class="p-1.5 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors" title="Edit">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                     </svg>
                   </button>
-                  <button
-                    (click)="deleteLog(log)"
-                    class="p-1.5 rounded hover:bg-red-100 text-muted-foreground hover:text-red-600 transition-colors"
-                    title="Löschen"
-                  >
+                  <button (click)="deleteLog(log)" class="p-1.5 rounded hover:bg-red-100 text-muted-foreground hover:text-red-600 transition-colors" title="Delete">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
@@ -71,14 +102,25 @@
       <!-- Stats -->
       @if (stats(); as s) {
         <div>
-          <h2 class="font-semibold">Stats</h2>
-          <p>Total Logs: {{ s.totalLogs }}</p>
-          <p>Total Distance: {{ s.totalDistance }} km</p>
-          <p>Total Time: {{ formatTime(s.totalTime) }}</p>
+          <h2 class="font-semibold mb-2">Stats</h2>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-card border border-border rounded-lg p-4">
+              <p class="text-xs text-muted-foreground mb-1">Total Logs</p>
+              <p class="font-medium">{{ s.totalLogs }}</p>
+            </div>
+            <div class="bg-card border border-border rounded-lg p-4">
+              <p class="text-xs text-muted-foreground mb-1">Total Distance</p>
+              <p class="font-medium">{{ s.totalDistance }} km</p>
+            </div>
+            <div class="bg-card border border-border rounded-lg p-4">
+              <p class="text-xs text-muted-foreground mb-1">Total Time</p>
+              <p class="font-medium">{{ formatTime(s.totalTime) }}</p>
+            </div>
+          </div>
         </div>
       }
-    </div>
 
+    </div>
   </div>
 
   <!-- Log Form Modal -->

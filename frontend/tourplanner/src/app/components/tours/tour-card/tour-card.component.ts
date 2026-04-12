@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-tour-card',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './tour-card.component.html',
   styleUrl: './tour-card.component.css',
 })
@@ -11,11 +12,11 @@ export class TourCardComponent {
   readonly tour = input.required<any>();
   readonly stats = input<any>();
 
-  // readonly edit = output<Tour>();
-  // readonly delete = output<Tour>();
+  readonly edit = output<any>();
+  readonly delete = output<any>();
 
   getTypeBadgeClasses(): string {
-    const type = this.tour().transportType;
+    const type = this.tour().transportTypeName?.toLowerCase();
     const baseClasses = 'bg-opacity-20';
     const typeStyles: Record<string, string> = {
       'bike': `${baseClasses} bg-chart-1 text-chart-1`,
@@ -44,13 +45,13 @@ export class TourCardComponent {
     return `${hours}h ${mins}m`;
   }
 
-  // onEdit(event: Event): void {
-  //   event.stopPropagation();
-  //   this.edit.emit(this.tour());
-  // }
+  onEdit(event: Event): void {
+    event.stopPropagation();
+    this.edit.emit(this.tour());
+  }
 
-  // onDelete(event: Event): void {
-  //   event.stopPropagation();
-  //   this.delete.emit(this.tour());
-  // }
+  onDelete(event: Event): void {
+    event.stopPropagation();
+    this.delete.emit(this.tour());
+  }
 }

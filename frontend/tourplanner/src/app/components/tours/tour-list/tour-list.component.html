@@ -38,6 +38,8 @@
               <app-tour-card 
                 [tour]="tour"
                 [stats]="{ popularity: 3, childFriendliness: 4, averageRating: 4.5, totalLogs: 10 }"
+                (edit)="onEditTour($event)"
+                (delete)="onDeleteTour($event)"
               />
             }
           </div>
@@ -49,7 +51,9 @@
         <div class="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div class="bg-card border border-border rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
             <app-tour-form
+              [tour]="editingTour()"
               (cancel)="closeForm()"
+              (save)="onSaveTour($event)"
             />
           </div>
         </div>

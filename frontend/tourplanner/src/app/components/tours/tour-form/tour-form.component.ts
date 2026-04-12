@@ -15,23 +15,23 @@ export class TourFormComponent {
 
   submitted = false;
 
+  readonly transportTypes = [
+    { value: 1, label: 'Bike', icon: 'bike' },
+    { value: 2, label: 'Hike', icon: 'hike' },
+    { value: 3, label: 'Running', icon: 'running' },
+    { value: 4, label: 'Vacation', icon: 'vacation' }
+  ];
+
   formData = {
     name: '',
     description: '',
-    transportType: 'bike',
-    from: '',
-    to: '',
+    transportTypeId: 1,
+    fromLocation: '',
+    toLocation: '',
     distance: 0,
     estimatedTime: 0,
     routeInformation: ''
   };
-
-  readonly transportTypes = [
-    { value: 'bike', label: 'Bike' },
-    { value: 'hike', label: 'Hike' },
-    { value: 'running', label: 'Running' },
-    { value: 'vacation', label: 'Vacation' }
-  ];
 
   constructor() {
     effect(() => {
@@ -40,9 +40,9 @@ export class TourFormComponent {
         this.formData = {
           name: tour.name,
           description: tour.description,
-          transportType: tour.transportType,
-          from: tour.from,
-          to: tour.to,
+          transportTypeId: tour.transportTypeId,
+          fromLocation: tour.fromLocation,
+          toLocation: tour.toLocation,
           distance: tour.distance,
           estimatedTime: tour.estimatedTime,
           routeInformation: tour.routeInformation
@@ -51,9 +51,9 @@ export class TourFormComponent {
         this.formData = {
           name: '',
           description: '',
-          transportType: 'bike',
-          from: '',
-          to: '',
+          transportTypeId: 1,
+          fromLocation: '',
+          toLocation: '',
           distance: 0,
           estimatedTime: 0,
           routeInformation: ''
@@ -66,8 +66,8 @@ export class TourFormComponent {
   isValid(): boolean {
     return !!(
       this.formData.name?.trim() &&
-      this.formData.from?.trim() &&
-      this.formData.to?.trim() &&
+      this.formData.fromLocation?.trim() &&
+      this.formData.toLocation?.trim() &&
       this.formData.distance > 0 &&
       this.formData.estimatedTime > 0
     );
@@ -75,7 +75,13 @@ export class TourFormComponent {
 
   onSubmit(): void {
     this.submitted = true;
-    if (!this.isValid()) return;
-    this.save.emit(this.formData);
+    if (!this.isValid()) {
+      return;
+    }
+    this.save.emit({
+      ...this.formData,
+      distance: Math.round(Number(this.formData.distance)),
+      estimatedTime: Math.round(Number(this.formData.estimatedTime))
+    });
   }
 }
