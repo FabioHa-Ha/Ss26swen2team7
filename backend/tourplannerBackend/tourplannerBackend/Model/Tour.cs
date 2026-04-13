@@ -2,7 +2,7 @@
 {
     public class Tour
     {
-        public required int Id { get; set; }
+        public int Id { get; set; }
         public required User User { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }

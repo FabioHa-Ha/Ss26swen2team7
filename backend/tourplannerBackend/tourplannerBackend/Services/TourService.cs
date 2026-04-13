@@ -48,7 +48,6 @@ namespace tourplannerBackend.Services
 
             var tour = new Tour
             {
-                Id = 0,
                 User = user,
                 Name = dto.Name,
                 Description = dto.Description,

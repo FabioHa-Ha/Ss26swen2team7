@@ -60,7 +60,6 @@ namespace tourplannerBackend.Services
 
             var log = new TourLog
             {
-                Id = 0,
                 Tour = tour,
                 User = user,
                 Date = dto.Date,
