@@ -60,4 +60,10 @@ namespace tourplannerBackend.DTOs
         public int TotalTime { get; set; }
         public int Rating { get; set; }
     }
+
+    public class ImageCreateDto
+    {
+        public required int TourLogId { get; set; }
+        public required IFormFile Image { get; set; }
+    }
 }

@@ -30,5 +30,6 @@ namespace tourPlannerBackend.Data
         public DbSet<Tour> Tours { get; set; }
         public DbSet<Difficulty> Difficulties { get; set; }
         public DbSet<TourLog> TourLogs { get; set; }
+        public DbSet<TourImage> TourImages { get; set; }
     }
 }

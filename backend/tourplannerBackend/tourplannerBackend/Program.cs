@@ -1,10 +1,11 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using tourPlannerBackend.Data;
+using Microsoft.OpenApi;
+using System.Text;
 using tourplannerBackend.Repositories;
 using tourplannerBackend.Services;
+using tourPlannerBackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +23,13 @@ builder.Services.AddScoped<ITourLogRepository, TourLogRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITransportTypeRepository, TransportTypeRepository>();
 builder.Services.AddScoped<IDifficultyRepository, DifficultyRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
 // Services
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ITourLogService, TourLogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddCors(options =>
 {
