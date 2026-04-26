@@ -26,6 +26,12 @@ namespace tourplannerBackend.Controllers
 
             int newId = await imageService.CreateImage(imageDto);
             return Ok(newId);
+            // TODO: Use different return codes for different errors
+            //catch (Exception e)
+            //{
+            //    
+            //    return StatusCode(StatusCodes.Status415UnsupportedMediaType, e);
+            //}
         }
 
         [HttpGet("{id}")]
