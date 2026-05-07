@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, input, output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ImageService } from '../../../services/image.service';
 
 @Component({
   selector: 'app-tour-form',
@@ -9,11 +10,15 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './tour-form.component.css',
 })
 export class TourFormComponent {
+  private imageService = inject(ImageService);
+
   readonly tour = input<any | null>(null);
   readonly save = output<Partial<any>>();
   readonly cancel = output<void>();
 
   submitted = false;
+  selectedImageId: number | null = null;
+  imageUploading = false;
 
   readonly transportTypes = [
     { value: 1, label: 'Bike', icon: 'bike' },
@@ -37,6 +42,7 @@ export class TourFormComponent {
     effect(() => {
       const tour = this.tour();
       if (tour) {
+        this.selectedImageId = tour.imageId ?? null;
         this.formData = {
           name: tour.name,
           description: tour.description,
@@ -48,6 +54,7 @@ export class TourFormComponent {
           routeInformation: tour.routeInformation
         };
       } else {
+        this.selectedImageId = null;
         this.formData = {
           name: '',
           description: '',
@@ -60,6 +67,27 @@ export class TourFormComponent {
         };
       }
       this.submitted = false;
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (!file) {
+      return;
+    }
+
+    this.imageUploading = true;
+    this.imageService.uploadImage(file).subscribe({
+      next: (id) => {
+        this.selectedImageId = id;
+        this.imageUploading = false;
+      },
+      error: (err) => {
+        console.error('Image upload failed', err);
+        this.imageUploading = false;
+      }
     });
   }
 
@@ -80,6 +108,7 @@ export class TourFormComponent {
     }
     this.save.emit({
       ...this.formData,
+      imageId: this.selectedImageId,
       distance: Math.round(Number(this.formData.distance)),
       estimatedTime: Math.round(Number(this.formData.estimatedTime))
     });
