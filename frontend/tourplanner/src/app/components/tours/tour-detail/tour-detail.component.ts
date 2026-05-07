@@ -4,6 +4,7 @@ import { TourLogFormComponent } from '../tour-log-form/tour-log-form.component';
 import { ActivatedRoute } from '@angular/router';
 import { TourService } from '../../../services/tour.service';
 import { TourLogService } from '../../../services/tour-log.services';
+import { ImageService } from '../../../services/image.service';
 
 interface TourLog {
   id: string;
@@ -37,6 +38,7 @@ interface Tour {
   styleUrl: './tour-detail.component.css',
 })
 export class TourDetailComponent implements OnInit {
+  imageUrl: string | null = null;
   showLogForm = signal(false);
   editingLog = signal<any>(null);
 
@@ -75,7 +77,7 @@ export class TourDetailComponent implements OnInit {
     return `${count} logs`;
   })
 
-  constructor(private route: ActivatedRoute, private tourService: TourService, private tourLogService: TourLogService) {
+  constructor(private route: ActivatedRoute, private tourService: TourService, private tourLogService: TourLogService, private imageService: ImageService) {
     effect(() => {
       const count = this._logs().length;
       console.log(`[Observer] Log count changed: ${count}`);
@@ -84,10 +86,17 @@ export class TourDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+
     this.tourService.getById(id).subscribe({
-      next: (tour) => this._tour.set(tour),
+      next: (tour) => {
+        this._tour.set(tour);
+        if (tour.imageId) {
+          this.imageUrl = this.imageService.getImageUrl(tour.imageId);
+        }
+      },
       error: (err) => console.error('Failed to load tour', err)
     });
+
     this.tourLogService.getByTour(id).subscribe({
       next: (logs) => this._logs.set(logs),
       error: (err) => console.error('Failed to load logs', err)
