@@ -19,7 +19,7 @@ export class TourService {
         return this.http.get<any[]>(`${this.base}/my`);
     }
 
-    getById(id: number): Observable<any[]> {
+    getById(id: number): Observable<any> {
         return this.http.get<any>(`${this.base}/${id}`);
     }
 
