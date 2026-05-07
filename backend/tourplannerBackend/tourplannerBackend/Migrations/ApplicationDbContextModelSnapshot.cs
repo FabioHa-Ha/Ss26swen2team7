@@ -60,6 +60,9 @@ namespace tourplannerBackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
