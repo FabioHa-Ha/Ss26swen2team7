@@ -28,6 +28,7 @@ namespace tourplannerBackend.DTOs
         public int? EstimatedTime { get; set; }
 
         public string? RouteInformation { get; set; }
+        public int? ImageId { get; set; }
     }
 
     public class TourUpdateDto
@@ -52,6 +53,7 @@ namespace tourplannerBackend.DTOs
         public int? EstimatedTime { get; set; }
 
         public string? RouteInformation { get; set; }
+        public int? ImageId { get; set; }
     }
 
     public class TourResponseDto
@@ -67,5 +69,6 @@ namespace tourplannerBackend.DTOs
         public int? Distance { get; set; }
         public int? EstimatedTime { get; set; }
         public string? RouteInformation { get; set; }
+        public int? ImageId { get; set; }
     }
 }

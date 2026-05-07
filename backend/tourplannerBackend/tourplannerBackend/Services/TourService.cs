@@ -56,7 +56,8 @@ namespace tourplannerBackend.Services
                 TransportType = transportType,
                 Distance = dto.Distance,
                 EstimatedTime = dto.EstimatedTime,
-                RouteInformation = dto.RouteInformation
+                RouteInformation = dto.RouteInformation,
+                ImageId = dto.ImageId
             };
 
             var created = await _tourRepository.CreateAsync(tour);
@@ -75,6 +76,7 @@ namespace tourplannerBackend.Services
             if (dto.Distance.HasValue) tour.Distance = dto.Distance;
             if (dto.EstimatedTime.HasValue) tour.EstimatedTime = dto.EstimatedTime;
             if (dto.RouteInformation != null) tour.RouteInformation = dto.RouteInformation;
+            if (dto.ImageId.HasValue) tour.ImageId = dto.ImageId;
 
             if (dto.TransportTypeId.HasValue)
             {
@@ -104,7 +106,8 @@ namespace tourplannerBackend.Services
             TransportTypeName = tour.TransportType.Name,
             Distance = tour.Distance,
             EstimatedTime = tour.EstimatedTime,
-            RouteInformation = tour.RouteInformation
+            RouteInformation = tour.RouteInformation,
+            ImageId = tour.ImageId
         };
     }
 }
