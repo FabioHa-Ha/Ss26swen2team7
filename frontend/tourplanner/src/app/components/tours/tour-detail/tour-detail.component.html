@@ -58,6 +58,23 @@
         </div>
       } -->
 
+      <!-- Photo Gallery -->
+      @if (imageUrls.length > 0) {
+        <div>
+          <h2 class="font-semibold mb-2">Photos</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+            @for (url of imageUrls; track url) {
+              <div
+                class="aspect-square rounded-lg overflow-hidden border border-border cursor-pointer hover:opacity-90 transition-opacity"
+                (click)="openLightbox(url)"
+              >
+                <img [src]="url" alt="Tour photo" class="w-full h-full object-cover" />
+              </div>
+            }
+          </div>
+        </div>
+      }
+
       <!-- Description -->
       <div>
         <h2 class="font-semibold mb-1">Description</h2>
@@ -137,6 +154,15 @@
         </div>
       }
 
+      <!-- Lightbox -->
+      @if (lightboxUrl) {
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          (click)="closeLightbox()"
+        >
+          <img [src]="lightboxUrl" alt="Tour photo" class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl object-contain" />
+        </div>
+      }
     </div>
   </div>
 
