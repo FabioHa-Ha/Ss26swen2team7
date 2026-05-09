@@ -60,9 +60,6 @@ namespace tourplannerBackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ImageId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -109,10 +106,12 @@ namespace tourplannerBackend.Migrations
                         .IsRequired()
                         .HasColumnType("bytea");
 
-                    b.Property<int>("TourLog")
+                    b.Property<int>("TourId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TourId");
 
                     b.ToTable("TourImages");
                 });
@@ -242,6 +241,15 @@ namespace tourplannerBackend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("tourplannerBackend.Model.TourImage", b =>
+                {
+                    b.HasOne("tourplannerBackend.Model.Tour", null)
+                        .WithMany("Images")
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("tourplannerBackend.Model.TourLog", b =>
                 {
                     b.HasOne("tourplannerBackend.Model.Difficulty", "Difficulty")
@@ -267,6 +275,11 @@ namespace tourplannerBackend.Migrations
                     b.Navigation("Tour");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("tourplannerBackend.Model.Tour", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }
