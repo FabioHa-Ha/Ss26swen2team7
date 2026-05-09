@@ -38,7 +38,8 @@ interface Tour {
   styleUrl: './tour-detail.component.css',
 })
 export class TourDetailComponent implements OnInit {
-  imageUrl: string | null = null;
+  imageUrls: string[] = [];
+  lightboxUrl: string | null = null;
   showLogForm = signal(false);
   editingLog = signal<any>(null);
 
@@ -88,11 +89,11 @@ export class TourDetailComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     this.tourService.getById(id).subscribe({
-      next: (tour) => {
+      next: (tour: any) => {
         this._tour.set(tour);
-        if (tour.imageId) {
-          this.imageUrl = this.imageService.getImageUrl(tour.imageId);
-        }
+        this.imageUrls = (tour.imageIds ?? []).map((id: number) =>
+          this.imageService.getImageUrl(id)
+        );
       },
       error: (err) => console.error('Failed to load tour', err)
     });
@@ -101,6 +102,14 @@ export class TourDetailComponent implements OnInit {
       next: (logs) => this._logs.set(logs),
       error: (err) => console.error('Failed to load logs', err)
     });
+  }
+
+  openLightbox(url: string) {
+    this.lightboxUrl = url;
+  }
+
+  closeLightbox() {
+    this.lightboxUrl = null;
   }
 
   formatTime(minutes: number): string {

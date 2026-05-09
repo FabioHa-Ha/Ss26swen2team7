@@ -161,19 +161,25 @@
       ></textarea>
     </div>
 
+    <!-- Tour Images -->
     <div class="space-y-2">
-      <label class="block text-sm font-medium text-foreground">Tour Image</label>
-      <input 
+      <label class="block text-sm font-medium text-foreground">Tour Images</label>
+      <input
         type="file"
         accept="image/*"
+        multiple
         (change)="onFileSelected($event)"
         class="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
       />
-      @if (imageUploading) {
-        <p class="text-xs text-muted-foreground">Uploading image...</p>
-      }
-      @if (selectedImageId && !imageUploading) {
-        <p class="text-xs text-green-500">Image uploaded successfully</p>
+      @if (pendingFiles.length > 0) {
+        <ul class="space-y-1">
+          @for (file of pendingFiles; track file.name; let i = $index) {
+            <li class="flex items-center justify-between text-xs text-muted-foreground bg-secondary px-3 py-1.5 rounded-lg">
+              <span>{{ file.name }}</span>
+              <button type="button" (click)="removePendingFile(i)" class="text-red-400 hover:text-red-600 ml-2">✕</button>
+            </li>
+          }
+        </ul>
       }
     </div>
 

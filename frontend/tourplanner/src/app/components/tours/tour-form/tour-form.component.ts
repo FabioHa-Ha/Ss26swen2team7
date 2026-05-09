@@ -13,11 +13,12 @@ export class TourFormComponent {
   private imageService = inject(ImageService);
 
   readonly tour = input<any | null>(null);
-  readonly save = output<Partial<any>>();
+  readonly save = output<{ data: Partial<any>, pendingFiles: File[] }>();
   readonly cancel = output<void>();
 
   submitted = false;
-  selectedImageId: number | null = null;
+  pendingFiles: File[] = [];
+  existingImageIds: number[] = [];
   imageUploading = false;
 
   readonly transportTypes = [
@@ -42,7 +43,8 @@ export class TourFormComponent {
     effect(() => {
       const tour = this.tour();
       if (tour) {
-        this.selectedImageId = tour.imageId ?? null;
+        this.existingImageIds = tour.imageIds ?? [];
+        this.pendingFiles = [];
         this.formData = {
           name: tour.name,
           description: tour.description,
@@ -53,8 +55,11 @@ export class TourFormComponent {
           estimatedTime: tour.estimatedTime,
           routeInformation: tour.routeInformation
         };
-      } else {
-        this.selectedImageId = null;
+      } 
+      else 
+      {
+        this.existingImageIds = [];
+        this.pendingFiles = [];
         this.formData = {
           name: '',
           description: '',
@@ -72,23 +77,17 @@ export class TourFormComponent {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+    const files = Array.from(input.files ?? []);
     
-    if (!file) {
+    if (!files.length) {
       return;
     }
 
-    this.imageUploading = true;
-    this.imageService.uploadImage(file).subscribe({
-      next: (id) => {
-        this.selectedImageId = id;
-        this.imageUploading = false;
-      },
-      error: (err) => {
-        console.error('Image upload failed', err);
-        this.imageUploading = false;
-      }
-    });
+    this.pendingFiles = [...this.pendingFiles, ...files];
+  }
+
+  removePendingFile(index: number): void {
+    this.pendingFiles = this.pendingFiles.filter((_, i) => i !== index);
   }
 
   isValid(): boolean {
@@ -107,10 +106,13 @@ export class TourFormComponent {
       return;
     }
     this.save.emit({
-      ...this.formData,
-      imageId: this.selectedImageId,
-      distance: Math.round(Number(this.formData.distance)),
-      estimatedTime: Math.round(Number(this.formData.estimatedTime))
+      data: {
+        ...this.formData,
+        imageIds: this.existingImageIds,
+        distance: Math.round(Number(this.formData.distance)),
+        estimatedTime: Math.round(Number(this.formData.estimatedTime))
+      },
+      pendingFiles: this.pendingFiles
     });
   }
 }

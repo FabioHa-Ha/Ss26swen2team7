@@ -5,6 +5,7 @@ import { TourFormComponent } from '../tour-form/tour-form.component';
 import { ButtonComponent } from '../../shared/ui/button/button.component';
 import { TourService } from '../../../services/tour.service';
 import { TourLogService } from '../../../services/tour-log.services';
+import { ImageService } from '../../../services/image.service';
 
 interface Tour {
   id: number;
@@ -28,7 +29,7 @@ export class TourListComponent implements OnInit {
   readonly editingTour = signal<Tour | null>(null);
   readonly tours = signal<Tour[]>([]);
 
-  constructor(private tourService: TourService, private tourLogService: TourLogService) {}
+  constructor(private tourService: TourService, private tourLogService: TourLogService, private imageService: ImageService) {}
 
   ngOnInit(): void {
     this.tourService.getMyTours().subscribe({
@@ -46,28 +47,60 @@ export class TourListComponent implements OnInit {
     this.showForm.set(false);
   }
 
-  onSaveTour(formData: any): void {
+  onSaveTour(event: { data: any, pendingFiles: File[] }): void {
+    const { data, pendingFiles } = event;
     const editing = this.editingTour();
 
     if (editing) {
       // UPDATE existing tour
-      this.tourService.update(editing.id, formData).subscribe({
+      this.tourService.update(editing.id, data).subscribe({
         next: (updated) => {
-          this.tours.update(tours => tours.map(t => t.id === updated.id ? updated : t));
-          this.closeForm();
+          // upload any new images for existing tour
+          this.uploadPendingFiles(pendingFiles, updated.id, () => {
+            this.tours.update(tours => tours.map(t => t.id === updated.id ? updated : t));
+            this.closeForm();
+          })
         },
         error: (err) => console.error('Failed to update tour', err)
       });
-    } else {
+    } 
+    else 
+    {
       // CREATE new tour
-      this.tourService.create(formData).subscribe({
+      this.tourService.create(data).subscribe({
         next: (created) => {
-          this.tours.update(tours => [...tours, created]);
-          this.closeForm();
+          this.uploadPendingFiles(pendingFiles, created.id, () => {
+            this.tours.update(tours => [...tours, created]);
+            this.closeForm();
+          });
         },
         error: (err) => console.error('Failed to create tour', err)
       });
     }
+  }
+
+  private uploadPendingFiles(files: File[], tourId: number, onDone: () => void): void {
+    if (!files.length) {
+      onDone();
+      return;
+    }
+
+    let completed = 0;
+    files.forEach(file => {
+      this.imageService.uploadImage(file, tourId).subscribe({
+        next: () => {
+          if (++completed === files.length) {
+            onDone();
+          }
+        },
+        error: (err) => {
+          console.error('Image upload failed', err);
+          if (++completed === files.length) {
+            onDone();
+          }
+        }
+      });
+    });
   }
 
   onEditTour(tour: any): void {
