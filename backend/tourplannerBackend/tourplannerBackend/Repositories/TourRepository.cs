@@ -35,6 +35,7 @@ namespace tourplannerBackend.Repositories
             return await _context.Tours
                 .Include(t => t.User)
                 .Include(t => t.TransportType)
+                .Include(t => t.Images)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
