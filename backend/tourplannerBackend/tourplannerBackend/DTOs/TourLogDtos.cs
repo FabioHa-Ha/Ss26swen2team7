@@ -63,7 +63,7 @@ namespace tourplannerBackend.DTOs
 
     public class ImageCreateDto
     {
-        public required int TourLogId { get; set; }
+        public required int TourId { get; set; }
         public required IFormFile Image { get; set; }
     }
 }
