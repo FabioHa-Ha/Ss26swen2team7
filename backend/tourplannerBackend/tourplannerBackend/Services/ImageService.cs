@@ -11,10 +11,12 @@ namespace tourplannerBackend.Services
     public class ImageService : IImageService
     {
         private readonly IImageRepository _imageRepository;
+        private readonly ITourRepository _tourRepository;
 
-        public ImageService(IImageRepository imageRepository)
+        public ImageService(IImageRepository imageRepository, ITourRepository tourRepository)
         {
             _imageRepository = imageRepository;
+            _tourRepository = tourRepository;
         }
 
         public byte[] ResizeAndConvertToJpeg(byte[] inputBytes)
@@ -53,9 +55,16 @@ namespace tourplannerBackend.Services
 
             imageBytes = ResizeAndConvertToJpeg(imageBytes);
 
+            var tour = await _tourRepository.GetByIdAsync(imageCreateDto.TourId);
+
+            if (tour == null)
+            {
+                throw new KeyNotFoundException($"Tour with id {imageCreateDto.TourId} not found.");
+            }
+
             TourImage tourImage = new TourImage
             {
-                TourLog = imageCreateDto.TourLogId,
+                TourId = tour.Id,
                 Image = imageBytes,
                 FileName = Path.GetFileNameWithoutExtension(imageCreateDto.Image.FileName) + ".jpeg",
                 ContentType = "image/jpeg",
