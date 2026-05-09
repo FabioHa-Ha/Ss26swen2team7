@@ -12,6 +12,6 @@
         public int? Distance { get; set; }
         public int? EstimatedTime { get; set; }
         public string? RouteInformation { get; set; }
-        public int? ImageId { get; set; }
+        public ICollection<TourImage> Images { get; set; } = [];
     }
 }
