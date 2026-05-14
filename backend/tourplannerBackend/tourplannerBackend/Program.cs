@@ -32,6 +32,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 // Singleton: in-memory collection must survive across requests
 builder.Services.AddSingleton<IContactService, ContactService>();
+builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 builder.Services.AddCors(options =>
 {
