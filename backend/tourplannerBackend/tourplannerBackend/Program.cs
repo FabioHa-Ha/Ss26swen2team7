@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using System.Text;
+using tourplannerBackend.Filters;
+using tourplannerBackend.Middleware;
 using tourplannerBackend.Repositories;
 using tourplannerBackend.Services;
 using tourPlannerBackend.Data;
@@ -34,6 +35,20 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddSingleton<IContactService, ContactService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
+// --- Error Handling (Task 5) --------------------------------------------------
+// 1. RFC-7807 ProblemDetails: standard error response shape for the whole API.
+//    [ApiController] automatically uses this for model-validation errors (400).
+builder.Services.AddProblemDetails();
+
+// 2. Global Exception Handler: catches all unhandled exceptions and maps them to
+//    ProblemDetails. Registered here; applied via app.UseExceptionHandler() below.
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// 3. DomainExceptionFilter: applied selectively via [TypeFilter] on TourController.
+//    Must be in DI so TypeFilter can resolve it with constructor injection.
+builder.Services.AddScoped<DomainExceptionFilter>();
+// -----------------------------------------------------------------------------
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
@@ -51,13 +66,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
+            ValidateIssuer           = true,
+            ValidateAudience         = true,
+            ValidateLifetime         = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            ValidIssuer              = builder.Configuration["Jwt:Issuer"],
+            ValidAudience            = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 
@@ -67,6 +82,10 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+// UseExceptionHandler() must be placed early in the pipeline (before routing and auth)
+// so it can intercept exceptions from any subsequent middleware or action.
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseSwagger();

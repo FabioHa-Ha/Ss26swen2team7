@@ -2,13 +2,24 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using tourplannerBackend.DTOs;
+using tourplannerBackend.Filters;
 using tourplannerBackend.Services;
 
 namespace tourplannerBackend.Controllers
 {
+    /// <summary>
+    /// Error-handling technique demonstrated here: EXCEPTION FILTER (DomainExceptionFilter).
+    ///
+    /// [TypeFilter(typeof(DomainExceptionFilter))] intercepts AppException subtypes thrown by the
+    /// service layer and converts them to ProblemDetails — scoped to this controller only.
+    /// Unrecognised exceptions (e.g. DbException) fall through to the GlobalExceptionHandler.
+    ///
+    /// Compare with ContactController which relies solely on the global handler.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
+    [TypeFilter(typeof(DomainExceptionFilter))]
     public class TourController : ControllerBase
     {
         private readonly ITourService _tourService;
@@ -34,39 +45,34 @@ namespace tourplannerBackend.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(TourResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TourResponseDto>> GetById(int id)
         {
             var tour = await _tourService.GetByIdAsync(id);
             return tour == null ? NotFound() : Ok(tour);
         }
 
+        // NotFoundException / BusinessRuleException → DomainExceptionFilter
         [HttpPost]
+        [ProducesResponseType(typeof(TourResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TourResponseDto>> Create([FromBody] TourCreateDto dto)
         {
             var userId = GetUserId();
-            try
-            {
-                var created = await _tourService.CreateAsync(userId, dto);
-                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var created = await _tourService.CreateAsync(userId, dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(TourResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TourResponseDto>> Update(int id, [FromBody] TourUpdateDto dto)
         {
-            try
-            {
-                var updated = await _tourService.UpdateAsync(id, dto);
-                return updated == null ? NotFound() : Ok(updated);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var updated = await _tourService.UpdateAsync(id, dto);
+            return updated == null ? NotFound() : Ok(updated);
         }
 
         [HttpDelete("{id}")]

@@ -1,4 +1,5 @@
 using tourplannerBackend.DTOs;
+using tourplannerBackend.Exceptions;
 using tourplannerBackend.Model;
 using tourplannerBackend.Repositories;
 
@@ -40,23 +41,30 @@ namespace tourplannerBackend.Services
 
         public async Task<TourResponseDto> CreateAsync(int userId, TourCreateDto dto)
         {
+            // Layer-based error propagation:
+            // Repository returns null → Service translates to NotFoundException (domain language)
+            // TourController's DomainExceptionFilter then maps it to HTTP 404 ProblemDetails
             var user = await _userRepository.GetByIdAsync(userId)
-                ?? throw new KeyNotFoundException($"User {userId} not found.");
+                ?? throw new NotFoundException(nameof(User), userId);
 
             var transportType = await _transportTypeRepository.GetByIdAsync(dto.TransportTypeId)
-                ?? throw new KeyNotFoundException($"TransportType {dto.TransportTypeId} not found.");
+                ?? throw new NotFoundException(nameof(TransportType), dto.TransportTypeId);
+
+            // BusinessRuleException example: distance must be positive when provided
+            if (dto.Distance.HasValue && dto.Distance.Value <= 0)
+                throw new BusinessRuleException("Distance must be greater than 0.", nameof(dto.Distance));
 
             var tour = new Tour
             {
-                User = user,
-                Name = dto.Name,
-                Description = dto.Description,
-                FromLocation = dto.FromLocation,
-                ToLocation = dto.ToLocation,
-                TransportType = transportType,
-                Distance = dto.Distance,
-                EstimatedTime = dto.EstimatedTime,
-                RouteInformation = dto.RouteInformation
+                User              = user,
+                Name              = dto.Name,
+                Description       = dto.Description,
+                FromLocation      = dto.FromLocation,
+                ToLocation        = dto.ToLocation,
+                TransportType     = transportType,
+                Distance          = dto.Distance,
+                EstimatedTime     = dto.EstimatedTime,
+                RouteInformation  = dto.RouteInformation
             };
 
             var created = await _tourRepository.CreateAsync(tour);
@@ -68,19 +76,21 @@ namespace tourplannerBackend.Services
             var tour = await _tourRepository.GetByIdAsync(id);
             if (tour == null) return null;
 
-            if (dto.Name != null) tour.Name = dto.Name;
-            if (dto.Description != null) tour.Description = dto.Description;
-            if (dto.FromLocation != null) tour.FromLocation = dto.FromLocation;
-            if (dto.ToLocation != null) tour.ToLocation = dto.ToLocation;
-            if (dto.Distance.HasValue) tour.Distance = dto.Distance;
+            if (dto.Distance.HasValue && dto.Distance.Value <= 0)
+                throw new BusinessRuleException("Distance must be greater than 0.", nameof(dto.Distance));
+
+            if (dto.Name        != null) tour.Name             = dto.Name;
+            if (dto.Description != null) tour.Description      = dto.Description;
+            if (dto.FromLocation != null) tour.FromLocation    = dto.FromLocation;
+            if (dto.ToLocation  != null) tour.ToLocation       = dto.ToLocation;
+            if (dto.Distance.HasValue)   tour.Distance         = dto.Distance;
             if (dto.EstimatedTime.HasValue) tour.EstimatedTime = dto.EstimatedTime;
             if (dto.RouteInformation != null) tour.RouteInformation = dto.RouteInformation;
 
             if (dto.TransportTypeId.HasValue)
             {
-                var transportType = await _transportTypeRepository.GetByIdAsync(dto.TransportTypeId.Value)
-                    ?? throw new KeyNotFoundException($"TransportType {dto.TransportTypeId.Value} not found.");
-                tour.TransportType = transportType;
+                tour.TransportType = await _transportTypeRepository.GetByIdAsync(dto.TransportTypeId.Value)
+                    ?? throw new NotFoundException(nameof(TransportType), dto.TransportTypeId.Value);
             }
 
             var updated = await _tourRepository.UpdateAsync(tour);
@@ -94,18 +104,18 @@ namespace tourplannerBackend.Services
 
         private static TourResponseDto MapToDto(Tour tour) => new()
         {
-            Id = tour.Id,
-            UserId = tour.User.Id,
-            Name = tour.Name,
-            Description = tour.Description,
-            FromLocation = tour.FromLocation,
-            ToLocation = tour.ToLocation,
-            TransportTypeId = tour.TransportType.Id,
+            Id               = tour.Id,
+            UserId           = tour.User.Id,
+            Name             = tour.Name,
+            Description      = tour.Description,
+            FromLocation     = tour.FromLocation,
+            ToLocation       = tour.ToLocation,
+            TransportTypeId  = tour.TransportType.Id,
             TransportTypeName = tour.TransportType.Name,
-            Distance = tour.Distance,
-            EstimatedTime = tour.EstimatedTime,
+            Distance         = tour.Distance,
+            EstimatedTime    = tour.EstimatedTime,
             RouteInformation = tour.RouteInformation,
-            ImageIds = tour.Images.Select(i => i.Id).ToList()
+            ImageIds         = tour.Images.Select(i => i.Id).ToList()
         };
     }
 }
