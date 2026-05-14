@@ -30,6 +30,8 @@ builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ITourLogService, TourLogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+// Singleton: in-memory collection must survive across requests
+builder.Services.AddSingleton<IContactService, ContactService>();
 
 builder.Services.AddCors(options =>
 {
