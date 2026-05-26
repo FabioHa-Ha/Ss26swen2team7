@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TourService } from '../../../services/tour.service';
 import { TourLogService } from '../../../services/tour-log.services';
 import { ImageService } from '../../../services/image.service';
+import { MapComponent } from '../../shared/map/map.component';
 
 interface TourLog {
   id: string;
@@ -33,7 +34,7 @@ interface Tour {
 
 @Component({
   selector: 'app-tour-detail',
-  imports: [CommonModule, TourLogFormComponent],
+  imports: [CommonModule, TourLogFormComponent, MapComponent],
   templateUrl: './tour-detail.component.html',
   styleUrl: './tour-detail.component.css',
 })
