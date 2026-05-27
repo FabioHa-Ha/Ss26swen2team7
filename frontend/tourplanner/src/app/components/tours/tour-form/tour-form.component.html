@@ -111,6 +111,27 @@
       </div>
     </div>
 
+    <!-- Fetch Route Button -->
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        (click)="fetchRoute()"
+        [disabled]="routeLoading || !formData.fromLocation.trim() || !formData.toLocation.trim()"
+        class="px-4 py-2 rounded-lg bg-secondary border border-border text-sm font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        @if (routeLoading) {
+          Fetching route...
+        }
+        @else 
+        {
+          ↺ Auto-fill Distance & Time
+        }
+    </button>
+    @if (routeError) {
+      <p class="text-xs text-red-500">Could not fetch route. Check your locations.</p>
+    }
+    </div>
+
     <!-- Distance / Time -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="space-y-1">
