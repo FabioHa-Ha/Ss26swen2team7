@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ImageService } from '../../../services/image.service';
+import { RouteService } from '../../../services/route-service';
 
 @Component({
   selector: 'app-tour-form',
@@ -11,6 +12,10 @@ import { ImageService } from '../../../services/image.service';
 })
 export class TourFormComponent {
   private imageService = inject(ImageService);
+  private routeService = inject(RouteService);
+
+  routeLoading = false;
+  routeError = false;
 
   readonly tour = input<any | null>(null);
   readonly save = output<{ data: Partial<any>, pendingFiles: File[] }>();
@@ -72,6 +77,28 @@ export class TourFormComponent {
         };
       }
       this.submitted = false;
+    });
+  }
+
+  fetchRoute(): void {
+    const { fromLocation, toLocation, transportTypeId } = this.formData;
+    if (!fromLocation?.trim() || !toLocation?.trim()) {
+      return;
+    }
+
+    this.routeLoading = true;
+    this.routeError = false;
+
+    this.routeService.getRoute(fromLocation, toLocation, transportTypeId).subscribe({
+      next: (info) => {
+        this.formData.distance = info.distanceKm;
+        this.formData.estimatedTime = info.durationMinutes;
+        this.routeLoading = false;
+      },
+      error: () => {
+        this.routeError = true;
+        this.routeLoading = false;
+      }
     });
   }
 
