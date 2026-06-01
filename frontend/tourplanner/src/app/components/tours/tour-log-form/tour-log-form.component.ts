@@ -34,11 +34,11 @@ export class TourLogFormComponent {
   };
 
   readonly difficultyOptions = [
-    { value: 1, label: 'Sehr leicht' },
-    { value: 2, label: 'Leicht' },
-    { value: 3, label: 'Mittel' },
-    { value: 4, label: 'Schwer' },
-    { value: 5, label: 'Sehr schwer' },
+    { value: 1, label: 'Very easy' },
+    { value: 2, label: 'Easy' },
+    { value: 3, label: 'Medium' },
+    { value: 4, label: 'Hard' },
+    { value: 5, label: 'Very hard' },
   ];
 
   constructor() {
