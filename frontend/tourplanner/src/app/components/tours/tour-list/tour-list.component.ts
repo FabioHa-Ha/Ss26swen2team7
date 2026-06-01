@@ -6,14 +6,15 @@ import { ButtonComponent } from '../../shared/ui/button/button.component';
 import { TourService } from '../../../services/tour.service';
 import { TourLogService } from '../../../services/tour-log.services';
 import { ImageService } from '../../../services/image.service';
+import { FilterService } from '../../../services/filter.service';
 
 interface Tour {
   id: number;
   name: string;
-  transportType: string;
+  transportTypeName: string;
   description: string;
-  from: string;
-  to: string;
+  fromLocation: string;
+  toLocation: string;
   distance: number;
   estimatedTime: number;
 }
@@ -29,7 +30,7 @@ export class TourListComponent implements OnInit {
   readonly editingTour = signal<Tour | null>(null);
   readonly tours = signal<Tour[]>([]);
 
-  constructor(private tourService: TourService, private tourLogService: TourLogService, private imageService: ImageService) {}
+  constructor(private tourService: TourService, private tourLogService: TourLogService, private imageService: ImageService, public filterService: FilterService) {}
 
   ngOnInit(): void {
     this.tourService.getMyTours().subscribe({
@@ -119,12 +120,11 @@ export class TourListComponent implements OnInit {
     });
   }
 
-  readonly filter = signal<'all' | string>('all');
-
   filteredTours = () => {
-    if (this.filter() === 'all') {
+    const filter = this.filterService.selectedType();
+    if (filter === 'all') {
       return this.tours();
     }
-    return this.tours().filter(t => t.transportType === this.filter());
+    return this.tours().filter(t => t.transportTypeName?.toLowerCase() === filter.toLowerCase());
   };
 }

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { FilterService } from '../../../services/filter.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,7 +12,7 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class SidebarComponent {
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private filterService: FilterService) {}
   
   someTours = [
     {
@@ -82,10 +83,12 @@ export class SidebarComponent {
     }
   ];
 
-  selectedType: string | 'all' = 'all';
+  get selectedType() {
+    return this.filterService.selectedType();
+  }
 
-  setFilter(type: string | 'all'): void {
-    this.selectedType = type;
+  setFilter(type: string): void {
+    this.filterService.setFilter(type);
   }
 
   formatTime(minutes: number): string {
@@ -107,26 +110,11 @@ export class SidebarComponent {
   }
 
   exportData(): void {
-    // const data = this.tourService.exportToJson();
-    // const blob = new Blob([data], { type: 'application/json' });
-    // const url = URL.createObjectURL(blob);
-    // const a = document.createElement('a');
-    // a.href = url;
-    // a.download = 'tour-planner-export.json';
-    // a.click();
-    // URL.revokeObjectURL(url);
+    // TODO
   }
 
   importData(event: Event): void {
-    // const input = event.target as HTMLInputElement;
-    // const file = input.files?.[0];
-    // if (file) {
-    //   const reader = new FileReader();
-    //   reader.onload = () => {
-    //     this.tourService.importFromJson(reader.result as string);
-    //   };
-    //   reader.readAsText(file);
-    // }
+    // TODO
   }
 
   logout(): void {
