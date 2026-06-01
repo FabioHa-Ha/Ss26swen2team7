@@ -29,6 +29,8 @@ export class TourListComponent implements OnInit {
   readonly showForm = signal(false);
   readonly editingTour = signal<Tour | null>(null);
   readonly tours = signal<Tour[]>([]);
+  readonly showDeleteDialog = signal(false);
+  readonly tourToDelete = signal<Tour | null>(null);
 
   constructor(private tourService: TourService, private tourLogService: TourLogService, private imageService: ImageService, public filterService: FilterService) {}
 
@@ -110,12 +112,29 @@ export class TourListComponent implements OnInit {
   }
 
   onDeleteTour(tour: any): void {
-    if (!confirm(`Delete "${tour.name}"?`)) {
+    this.tourToDelete.set(tour);
+    this.showDeleteDialog.set(true);
+  }
+
+  cancelDelete(): void {
+    this.showDeleteDialog.set(false);
+    this.tourToDelete.set(null);
+  }
+
+  confirmDelete(): void {
+    const tour = this.tourToDelete();
+
+    if (!tour) {
       return;
     }
 
     this.tourService.delete(tour.id).subscribe({
-      next: () => this.tours.update(tours => tours.filter(t => t.id !== tour.id)),
+      next: () => {
+        this.tours.update(tours => tours.filter(t => t.id !== tour.id));
+
+        this.showDeleteDialog.set(false);
+        this.tourToDelete.set(null);
+      },
       error: (err) => console.error('Failed to delete tour', err)
     });
   }
