@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj": {}
+    "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj": {}
   },
   "projects": {
-    "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj": {
+    "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj",
         "projectName": "tourplannerBackend.Tests",
-        "projectPath": "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj",
-        "packagesPath": "C:\\Users\\Aaron Domingo\\.nuget\\packages\\",
-        "outputPath": "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\obj\\",
+        "projectPath": "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\tourplannerBackend.Tests.csproj",
+        "packagesPath": "C:\\Users\\Jan\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Aaron Domingo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Jan\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,8 +32,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj": {
-                "projectPath": "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj"
+              "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj": {
+                "projectPath": "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj"
               }
             }
           }
@@ -373,20 +373,20 @@
         }
       }
     },
-    "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj": {
+    "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj",
+        "projectUniqueName": "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj",
         "projectName": "tourplannerBackend",
-        "projectPath": "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj",
-        "packagesPath": "C:\\Users\\Aaron Domingo\\.nuget\\packages\\",
-        "outputPath": "D:\\User\\Desktop\\repos\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\obj\\",
+        "projectPath": "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\tourplannerBackend.csproj",
+        "packagesPath": "C:\\Users\\Jan\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Jan\\Desktop\\Ss26swen2team7\\backend\\tourplannerBackend\\tourplannerBackend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Aaron Domingo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Jan\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
