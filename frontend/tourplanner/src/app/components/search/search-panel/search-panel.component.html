@@ -1,133 +1,140 @@
 <div class="h-full flex flex-col">
-      <!-- Header -->
-      <header class="px-6 py-4 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <h1 class="text-2xl font-bold text-foreground mb-4 pl-12">Search Tours</h1>
-        
-        <div class="relative">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <!-- Header -->
+  <header class="px-6 py-4 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+    <h1 class="text-2xl font-bold text-foreground mb-4 pl-12">Search Tours</h1>
+    <div class="relative">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input
+        #searchInput
+        type="text"
+        [value]="searchQuery()"
+        (input)="onSearch(searchInput.value)"
+        placeholder="Search tours, logs, locations..."
+        class="w-full pl-10 pr-10 py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+      @if (searchQuery()) {
+        <button
+          (click)="clearSearch(); searchInput.value = ''"
+          class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      }
+    </div>
+    <p class="text-sm text-muted-foreground mt-3">
+      Search across tour names, descriptions, locations, route information, and computed attributes.
+    </p>
+  </header>
+
+  <!-- Results -->
+  <div class="flex-1 overflow-auto p-6">
+
+    @if (loading()) {
+      <div class="flex items-center justify-center h-64">
+        <p class="text-muted-foreground text-sm">Searching...</p>
+      </div>
+
+    } @else if (!searchQuery()) {
+      <div class="flex flex-col items-center justify-center h-64 text-center">
+        <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <input
-            #searchInput
-            type="text"
-            [value]="searchQuery()"
-            (input)="onSearch(searchInput.value)"
-            class="w-full pl-10 pr-10 py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <button class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
         </div>
-
-        <p class="text-sm text-muted-foreground mt-3">
-          Search across tour names, descriptions, locations, route information, and computed attributes like popularity and child-friendliness.
+        <h3 class="text-lg font-medium text-foreground mb-1">Start searching</h3>
+        <p class="text-muted-foreground max-w-md">
+          Try searching for locations, tour names, or keywords like "popular" or "easy".
         </p>
-      </header>
-
-      <!-- Results -->
-      <div class="flex-1 overflow-auto p-6">
-        @if (!searchQuery()) {
-          <!-- start searching -->
-          <div class="flex flex-col items-center justify-center h-64 text-center">
-            <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-              <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <h3 class="text-lg font-medium text-foreground mb-1">Start searching</h3>
-            <p class="text-muted-foreground max-w-md">
-              Enter keywords to search across all your tours and logs. 
-              Try searching for "popular", "child-friendly", or specific locations.
-            </p>
-          </div>
-        
-        } @else if (results().tours.length === 0 && results().logs.length === 0) {
-          <!-- no results -->
-          <div class="flex flex-col items-center justify-center h-64 text-center">
-            <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-              <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 class="text-lg font-medium text-foreground mb-1">No results found</h3>
-            <p class="text-muted-foreground">
-              No tours or logs match {{ "searchQuery()" }}. Try a different search term.
-            </p>
-          </div>
-
-        } @else {
-          <div class="space-y-6">
-            <!-- Tours Results -->
-              <section>
-                <h2 class="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
-                  Tours ({{ results().tours.length }})
-                </h2>
-                <div class="space-y-3">
-                  @for (tour of results().tours; track tour.id) {
-                    <a class="block bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-colors">
-                      <div class="flex items-start justify-between gap-4">
-                        <div class="flex-1 min-w-0">
-                          <div class="flex items-center gap-2 mb-1">
-                            <h3 class="font-semibold text-foreground"> {{ tour.name }} </h3>
-                            <span class="px-2 py-0.5 text-xs rounded-full bg-primary/20 text-primary">
-                              {{ tour.transportType }}
-                            </span>
-                          </div>
-                          <p class="text-sm text-muted-foreground mb-2 line-clamp-2"> {{ tour.description }}</p>
-                          <div class="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span>{{ tour.from }} → {{ tour.to }} </span>
-                            <span>{{ tour.distance }} km</span>
-                          </div>
-                        </div>
-                          <div class="flex flex-wrap gap-1">
-                            @for (field of (results().matchedFields.get(tour.id) || []); track field) {
-                              <span class="px-2 py-0.5 text-xs rounded-md bg-secondary text-secondary-foreground">
-                                {{ formatFieldName(field) }}
-                              </span>
-                            }
-                          </div>
-                      </div>
-                    </a>
-                  }
-                </div>
-              </section>
-
-            <!-- Logs Results -->
-              <section>
-                <h2 class="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
-                  Tour Logs ({{ results().logs.length }})
-                </h2>
-                <div class="space-y-3">
-                  @for (log of results().logs; track log.id) {
-                    <a class="block bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-colors"
-                    >
-                      <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-muted-foreground"> {{ log.date | date:'mediumDate' }} </span>
-                        <div class="flex items-center gap-0.5">
-                          @for (i of [1,2,3,4,5]; track i) {
-                            <svg 
-                              class="w-3.5 h-3.5"
-                              fill="currentColor" 
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                          }
-                        </div>
-                      </div>
-                      <p class="text-foreground"> {{ log.comment }} </p>
-                      <div class="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                        <span> {{ log.totalDistance }} km</span>
-                        <span> {{ formatTime(log.totalTime) }} </span>
-                        <span>Difficulty: {{ log.difficulty }}/5</span>
-                      </div>
-                    </a>
-                  }
-                </div>
-              </section>
-          </div>
-        }
       </div>
-    </div>
+
+    } @else if (results().tours.length === 0 && results().logs.length === 0) {
+      <div class="flex flex-col items-center justify-center h-64 text-center">
+        <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-foreground mb-1">No results found</h3>
+        <p class="text-muted-foreground">No tours or logs match "{{ searchQuery() }}".</p>
+      </div>
+
+    } @else {
+      <div class="space-y-6">
+
+        <!-- Tours Results -->
+        @if (results().tours.length > 0) {
+          <section>
+            <h2 class="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
+              Tours ({{ results().tours.length }})
+            </h2>
+            <div class="space-y-3">
+              @for (tour of results().tours; track tour.id) {
+                <a 
+                  class="block bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-colors"
+                  [routerLink]="['/tours', tour.id]"
+                >
+                  <div class="flex items-start justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-1">
+                        <h3 class="font-semibold text-foreground">{{ tour.name }}</h3>
+                        <span class="px-2 py-0.5 text-xs rounded-full bg-primary/20 text-primary">
+                          {{ tour.transportTypeName }}
+                        </span>
+                      </div>
+                      <p class="text-sm text-muted-foreground mb-2 line-clamp-2">{{ tour.description }}</p>
+                      <div class="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span>{{ tour.fromLocation }} → {{ tour.toLocation }}</span>
+                        <span>{{ tour.distance }} km</span>
+                        <span>Popularity: {{ tour.popularity }}</span>
+                        <span>Child-friendly: {{ tour.childFriendliness }}/5</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-1 shrink-0">
+                      @for (field of tour.matchedFields; track field) {
+                        <span class="px-2 py-0.5 text-xs rounded-md bg-secondary text-secondary-foreground">
+                          {{ formatFieldName(field) }}
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </a>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Logs Results -->
+        @if (results().logs.length > 0) {
+          <section>
+            <h2 class="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
+              Tour Logs ({{ results().logs.length }})
+            </h2>
+            <div class="space-y-3">
+              @for (log of results().logs; track log.id) {
+                <div class="block bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-colors">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-foreground">{{ log.tourName }}</span>
+                    <span class="text-sm text-muted-foreground">{{ log.date | date:'mediumDate' }}</span>
+                  </div>
+                  @if (log.comment) {
+                    <p class="text-sm text-foreground mb-2">{{ log.comment }}</p>
+                  }
+                  <div class="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span>{{ log.totalDistance }} km</span>
+                    <span>{{ formatTime(log.totalTime) }}</span>
+                    <span>Difficulty: {{ log.difficulty }}/5</span>
+                    <span>Rating: {{ log.rating }}/5</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+      </div>
+    }
+  </div>
+</div>

@@ -1,51 +1,56 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal, computed } from '@angular/core';
+import { SearchResults, SearchService } from '../../../services/search.service';
+import { debounceTime, distinctUntilChanged, EMPTY, Subject, switchMap } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-search-panel',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './search-panel.component.html',
   styleUrl: './search-panel.component.css',
 })
 export class SearchPanelComponent {
-  // fake input state
   readonly searchQuery = signal('');
+  readonly results = signal<SearchResults>({ tours: [], logs: [] });
+  readonly loading = signal(false);
 
-  // fake results (replace later with service)
-  readonly results = signal({
-    tours: [
-      {
-        id: '1',
-        name: 'Vienna Ride',
-        transportType: 'bike',
-        description: 'Nice ride',
-        from: 'Vienna',
-        to: 'Danube',
-        distance: 12
-      }
-    ],
-    logs: [
-      {
-        id: 'l1',
-        tourId: '1',
-        date: new Date(),
-        comment: 'Great ride',
-        totalDistance: 12,
-        totalTime: 80,
-        difficulty: 3,
-        rating: 4
-      }
-    ],
-    matchedFields: new Map()
-  });
+  private searchObject = new Subject<string>();
 
-  // update query (fake search for now)
+  constructor(private searchService: SearchService) {
+    this.searchObject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(q => {
+        const term = q.trim();
+
+        if (!term) {
+          this.results.set({ tours: [], logs: [] });
+          this.loading.set(false);
+          return EMPTY;
+        }
+
+        this.loading.set(true);
+        return this.searchService.search(term);
+      })
+    ).subscribe({
+      next: (res) => {
+        this.results.set(res);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false)
+    });
+  }
+
   onSearch(value: string) {
     this.searchQuery.set(value);
+    this.searchObject.next(value);
   }
 
   clearSearch() {
     this.searchQuery.set('');
+    // this.results.set({ tours: [], logs: [] });
+    this.searchObject.next('');
   }
 
   formatFieldName(field: string): string {
