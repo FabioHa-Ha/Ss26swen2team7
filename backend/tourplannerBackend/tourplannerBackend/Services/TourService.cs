@@ -10,33 +10,42 @@ namespace tourplannerBackend.Services
         private readonly ITourRepository _tourRepository;
         private readonly IUserRepository _userRepository;
         private readonly ITransportTypeRepository _transportTypeRepository;
+        private readonly ITourLogRepository _tourLogRepository;
 
         public TourService(
             ITourRepository tourRepository,
             IUserRepository userRepository,
-            ITransportTypeRepository transportTypeRepository)
+            ITransportTypeRepository transportTypeRepository,
+            ITourLogRepository tourLogRepository)
         {
             _tourRepository = tourRepository;
             _userRepository = userRepository;
             _transportTypeRepository = transportTypeRepository;
+            _tourLogRepository = tourLogRepository;
         }
 
         public async Task<IEnumerable<TourResponseDto>> GetAllAsync()
         {
             var tours = await _tourRepository.GetAllAsync();
-            return tours.Select(MapToDto);
+            var allLogs = await _tourLogRepository.GetAllAsync();
+            var logsByTour = allLogs.GroupBy(l => l.Tour.Id).ToDictionary(g => g.Key, g => g.ToList());
+            return tours.Select(t => MapToDto(t, logsByTour.GetValueOrDefault(t.Id, [])));
         }
 
         public async Task<IEnumerable<TourResponseDto>> GetByUserIdAsync(int userId)
         {
             var tours = await _tourRepository.GetByUserIdAsync(userId);
-            return tours.Select(MapToDto);
+            var userLogs = await _tourLogRepository.GetByUserIdAsync(userId);
+            var logsByTour = userLogs.GroupBy(l => l.Tour.Id).ToDictionary(g => g.Key, g => g.ToList());
+            return tours.Select(t => MapToDto(t, logsByTour.GetValueOrDefault(t.Id, [])));
         }
 
         public async Task<TourResponseDto?> GetByIdAsync(int id)
         {
             var tour = await _tourRepository.GetByIdAsync(id);
-            return tour == null ? null : MapToDto(tour);
+            if (tour == null) return null;
+            var logs = await _tourLogRepository.GetByTourIdAsync(id);
+            return MapToDto(tour, logs);
         }
 
         public async Task<TourResponseDto> CreateAsync(int userId, TourCreateDto dto)
@@ -70,7 +79,7 @@ namespace tourplannerBackend.Services
             };
 
             var created = await _tourRepository.CreateAsync(tour);
-            return MapToDto(created);
+            return MapToDto(created, []);
         }
 
         public async Task<TourResponseDto?> UpdateAsync(int id, TourUpdateDto dto)
@@ -99,7 +108,9 @@ namespace tourplannerBackend.Services
             }
 
             var updated = await _tourRepository.UpdateAsync(tour);
-            return updated == null ? null : MapToDto(updated);
+            if (updated == null) return null;
+            var logs = await _tourLogRepository.GetByTourIdAsync(id);
+            return MapToDto(updated, logs);
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -107,20 +118,38 @@ namespace tourplannerBackend.Services
             return await _tourRepository.DeleteAsync(id);
         }
 
-        private static TourResponseDto MapToDto(Tour tour) => new()
+        private static TourResponseDto MapToDto(Tour tour, IEnumerable<TourLog> logs)
         {
-            Id               = tour.Id,
-            UserId           = tour.User.Id,
-            Name             = tour.Name,
-            Description      = tour.Description,
-            FromLocation     = tour.FromLocation,
-            ToLocation       = tour.ToLocation,
-            TransportTypeId  = tour.TransportType.Id,
-            TransportTypeName = tour.TransportType.Name,
-            Distance         = tour.Distance,
-            EstimatedTime    = tour.EstimatedTime,
-            RouteInformation = tour.RouteInformation,
-            ImageIds         = tour.Images.Select(i => i.Id).ToList()
-        };
+            var logList = logs.ToList();
+            return new TourResponseDto
+            {
+                Id               = tour.Id,
+                UserId           = tour.User.Id,
+                Name             = tour.Name,
+                Description      = tour.Description,
+                FromLocation     = tour.FromLocation,
+                ToLocation       = tour.ToLocation,
+                TransportTypeId  = tour.TransportType.Id,
+                TransportTypeName = tour.TransportType.Name,
+                Distance         = tour.Distance,
+                EstimatedTime    = tour.EstimatedTime,
+                RouteInformation = tour.RouteInformation,
+                ImageIds         = tour.Images.Select(i => i.Id).ToList(),
+                TotalLogs        = logList.Count,
+                Popularity       = logList.Count,
+                ChildFriendliness = ComputeChildFriendliness(logList),
+                AverageRating    = logList.Count > 0
+                                   ? Math.Round(logList.Average(l => l.Rating), 1)
+                                   : 0
+            };
+        }
+
+        private static int ComputeChildFriendliness(List<TourLog> logs)
+        {
+            if (logs.Count == 0) return 0;
+            var avgDifficulty = logs.Average(l => l.Difficulty.Id);
+            var score = 5 - (int)Math.Round((avgDifficulty - 1) / 4 * 4);
+            return Math.Clamp(score, 1, 5);
+        }
     }
 }

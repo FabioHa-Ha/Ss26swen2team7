@@ -70,5 +70,10 @@ namespace tourplannerBackend.DTOs
         public int? EstimatedTime { get; set; }
         public string? RouteInformation { get; set; }
         public List<int> ImageIds { get; set; }
+        // Computed attributes (derived from tour logs)
+        public int TotalLogs { get; set; }
+        public int Popularity { get; set; }
+        public int ChildFriendliness { get; set; }
+        public double AverageRating { get; set; }
     }
 }

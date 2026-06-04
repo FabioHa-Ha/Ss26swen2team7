@@ -35,9 +35,9 @@
         } @else {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             @for (tour of filteredTours(); track tour.id) { 
-              <app-tour-card 
+              <app-tour-card
                 [tour]="tour"
-                [stats]="{ popularity: 3, childFriendliness: 4, averageRating: 4.5, totalLogs: 10 }"
+                [stats]="{ popularity: tour.popularity, childFriendliness: tour.childFriendliness, averageRating: tour.averageRating, totalLogs: tour.totalLogs }"
                 (edit)="onEditTour($event)"
                 (delete)="onDeleteTour($event)"
               />
