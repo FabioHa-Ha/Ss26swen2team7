@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using tourplannerBackend.DTOs;
+using tourplannerBackend.Filters;
 using tourplannerBackend.Services;
 
 namespace tourplannerBackend.Controllers
@@ -9,6 +10,7 @@ namespace tourplannerBackend.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
+    [TypeFilter(typeof(DomainExceptionFilter))]
     public class TourLogController : ControllerBase
     {
         private readonly ITourLogService _tourLogService;
@@ -48,32 +50,24 @@ namespace tourplannerBackend.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(TourLogResponseDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TourLogResponseDto>> Create([FromBody] TourLogCreateDto dto)
         {
             var userId = GetUserId();
-            try
-            {
-                var created = await _tourLogService.CreateAsync(userId, dto);
-                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var created = await _tourLogService.CreateAsync(userId, dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(TourLogResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TourLogResponseDto>> Update(int id, [FromBody] TourLogUpdateDto dto)
         {
-            try
-            {
-                var updated = await _tourLogService.UpdateAsync(id, dto);
-                return updated == null ? NotFound() : Ok(updated);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var updated = await _tourLogService.UpdateAsync(id, dto);
+            return updated == null ? NotFound() : Ok(updated);
         }
 
         [HttpDelete("{id}")]

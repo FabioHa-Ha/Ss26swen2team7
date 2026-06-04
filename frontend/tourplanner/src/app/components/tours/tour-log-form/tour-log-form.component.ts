@@ -41,6 +41,14 @@ export class TourLogFormComponent {
     { value: 5, label: 'Very hard' },
   ];
 
+  readonly ratingOptions = [
+    { value: 1, label: 'Poor' },
+    { value: 2, label: 'Fair' },
+    { value: 3, label: 'Good' },
+    { value: 4, label: 'Very good' },
+    { value: 5, label: 'Excellent' },
+  ];
+
   constructor() {
     effect(() => {
       const log = this.log();
@@ -71,8 +79,8 @@ export class TourLogFormComponent {
     return !!(
       this.formData.date &&
       this.formData.difficulty >= 1 && this.formData.difficulty <= 5 &&
-      this.formData.totalDistance > 0 &&
-      this.formData.totalTime > 0 &&
+      Number.isFinite(this.formData.totalDistance) && this.formData.totalDistance > 0 &&
+      Number.isFinite(this.formData.totalTime) && this.formData.totalTime > 0 &&
       this.formData.rating >= 1 && this.formData.rating <= 5
     );
   }

@@ -122,8 +122,8 @@ export class TourFormComponent {
       this.formData.name?.trim() &&
       this.formData.fromLocation?.trim() &&
       this.formData.toLocation?.trim() &&
-      this.formData.distance > 0 &&
-      this.formData.estimatedTime > 0
+      Number.isFinite(this.formData.distance) && this.formData.distance > 0 &&
+      Number.isFinite(this.formData.estimatedTime) && this.formData.estimatedTime > 0
     );
   }
 

@@ -1,4 +1,5 @@
 using tourplannerBackend.DTOs;
+using tourplannerBackend.Exceptions;
 using tourplannerBackend.Model;
 using tourplannerBackend.Repositories;
 
@@ -50,13 +51,22 @@ namespace tourplannerBackend.Services
         public async Task<TourLogResponseDto> CreateAsync(int userId, TourLogCreateDto dto)
         {
             var user = await _userRepository.GetByIdAsync(userId)
-                ?? throw new KeyNotFoundException($"User {userId} not found.");
+                ?? throw new NotFoundException(nameof(User), userId);
 
             var tour = await _tourRepository.GetByIdAsync(dto.TourId)
-                ?? throw new KeyNotFoundException($"Tour {dto.TourId} not found.");
+                ?? throw new NotFoundException(nameof(Tour), dto.TourId);
 
             var difficulty = await _difficultyRepository.GetByIdAsync(dto.DifficultyId)
-                ?? throw new KeyNotFoundException($"Difficulty {dto.DifficultyId} not found.");
+                ?? throw new NotFoundException(nameof(Difficulty), dto.DifficultyId);
+
+            if (dto.TotalDistance <= 0)
+                throw new BusinessRuleException("Total distance must be greater than 0.", nameof(dto.TotalDistance));
+
+            if (dto.TotalTime <= 0)
+                throw new BusinessRuleException("Total time must be greater than 0.", nameof(dto.TotalTime));
+
+            if (dto.Rating < 1 || dto.Rating > 5)
+                throw new BusinessRuleException("Rating must be between 1 and 5.", nameof(dto.Rating));
 
             var log = new TourLog
             {
@@ -79,6 +89,15 @@ namespace tourplannerBackend.Services
             var log = await _tourLogRepository.GetByIdAsync(id);
             if (log == null) return null;
 
+            if (dto.TotalDistance.HasValue && dto.TotalDistance.Value <= 0)
+                throw new BusinessRuleException("Total distance must be greater than 0.", nameof(dto.TotalDistance));
+
+            if (dto.TotalTime.HasValue && dto.TotalTime.Value <= 0)
+                throw new BusinessRuleException("Total time must be greater than 0.", nameof(dto.TotalTime));
+
+            if (dto.Rating.HasValue && (dto.Rating.Value < 1 || dto.Rating.Value > 5))
+                throw new BusinessRuleException("Rating must be between 1 and 5.", nameof(dto.Rating));
+
             if (dto.Date.HasValue) log.Date = dto.Date.Value;
             if (dto.Comment != null) log.Comment = dto.Comment;
             if (dto.TotalDistance.HasValue) log.TotalDistance = dto.TotalDistance.Value;
@@ -88,7 +107,7 @@ namespace tourplannerBackend.Services
             if (dto.DifficultyId.HasValue)
             {
                 var difficulty = await _difficultyRepository.GetByIdAsync(dto.DifficultyId.Value)
-                    ?? throw new KeyNotFoundException($"Difficulty {dto.DifficultyId.Value} not found.");
+                    ?? throw new NotFoundException(nameof(Difficulty), dto.DifficultyId.Value);
                 log.Difficulty = difficulty;
             }
 

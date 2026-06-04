@@ -50,9 +50,11 @@ namespace tourplannerBackend.Services
             var transportType = await _transportTypeRepository.GetByIdAsync(dto.TransportTypeId)
                 ?? throw new NotFoundException(nameof(TransportType), dto.TransportTypeId);
 
-            // BusinessRuleException example: distance must be positive when provided
             if (dto.Distance.HasValue && dto.Distance.Value <= 0)
                 throw new BusinessRuleException("Distance must be greater than 0.", nameof(dto.Distance));
+
+            if (dto.EstimatedTime.HasValue && dto.EstimatedTime.Value <= 0)
+                throw new BusinessRuleException("Estimated time must be greater than 0.", nameof(dto.EstimatedTime));
 
             var tour = new Tour
             {
@@ -78,6 +80,9 @@ namespace tourplannerBackend.Services
 
             if (dto.Distance.HasValue && dto.Distance.Value <= 0)
                 throw new BusinessRuleException("Distance must be greater than 0.", nameof(dto.Distance));
+
+            if (dto.EstimatedTime.HasValue && dto.EstimatedTime.Value <= 0)
+                throw new BusinessRuleException("Estimated time must be greater than 0.", nameof(dto.EstimatedTime));
 
             if (dto.Name        != null) tour.Name             = dto.Name;
             if (dto.Description != null) tour.Description      = dto.Description;
