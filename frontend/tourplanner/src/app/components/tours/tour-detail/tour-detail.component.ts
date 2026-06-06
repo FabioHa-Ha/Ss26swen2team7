@@ -18,7 +18,7 @@ interface TourLog {
 }
 
 interface Tour {
-  id: string;
+  id: number;
   name: string;
   from: string;
   to: string;
@@ -46,6 +46,9 @@ export class TourDetailComponent implements OnInit {
 
   private readonly _tour = signal<any>(null);
   private readonly _logs = signal<any[]>([]);
+
+  readonly showDeleteLogDialog = signal(false);
+  readonly logToDelete = signal<any>(null);
 
   readonly tour = computed(() => {
     const t = this._tour();
@@ -138,10 +141,13 @@ export class TourDetailComponent implements OnInit {
 
   saveLog(data: any) {
     const editing = this.editingLog();
-    const tourId = this._tour()?.id;
+    const tourId = Number(this._tour()?.id);
 
     if (editing) {
-      this.tourLogService.update(editing.id, data).subscribe({
+      this.tourLogService.update(editing.id,  {
+        ...data,
+        difficultyId: data.difficulty
+      }).subscribe({
         next: (updated) => {
           this._logs.update(logs => logs.map(l => l.id === updated.id ? updated : l));
           this.closeLogForm();
@@ -149,7 +155,7 @@ export class TourDetailComponent implements OnInit {
         error: (err) => console.error('Failed to update log', err)
       });
     } else {
-      this.tourLogService.create({ ...data, tourId }).subscribe({
+      this.tourLogService.create({ ...data, tourId, difficultyId: data.difficulty }).subscribe({
         next: (created) => {
           this._logs.update(logs => [...logs, created]);
           this.closeLogForm();
@@ -160,12 +166,27 @@ export class TourDetailComponent implements OnInit {
   }
 
   deleteLog(log: any) {
-    if (!confirm('Delete this log?')) {
+    this.logToDelete.set(log);
+    this.showDeleteLogDialog.set(true);
+  }
+
+  cancelDeleteLog(): void {
+    this.showDeleteLogDialog.set(false);
+    this.logToDelete.set(null);
+  }
+
+  confirmDeleteLog(): void {
+    const log = this.logToDelete();
+    if (!log) {
       return;
     }
 
     this.tourLogService.delete(log.id).subscribe({
-      next: () => this._logs.update(logs => logs.filter(l => l.id !== log.id)),
+      next: () =>  {
+        this._logs.update(logs => logs.filter(l => l.id !== log.id));
+        this.showDeleteLogDialog.set(false);
+        this.logToDelete.set(null);
+      },
       error: (err) => console.error('Failed to delete log', err)
     });
   }
