@@ -91,10 +91,10 @@ export class TourLogFormComponent {
     this.save.emit({
       date: new Date(this.formData.date),
       comment: this.formData.comment,
-      difficulty: this.formData.difficulty,
-      totalDistance: this.formData.totalDistance,
-      totalTime: this.formData.totalTime,
-      rating: this.formData.rating,
+      difficulty: Number(this.formData.difficulty),
+      totalDistance: Number(this.formData.totalDistance),
+      totalTime: Number(this.formData.totalTime),
+      rating: Number(this.formData.rating),
     });
   }
 }
