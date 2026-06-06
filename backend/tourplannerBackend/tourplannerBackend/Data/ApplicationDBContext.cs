@@ -23,6 +23,14 @@ namespace tourPlannerBackend.Data
                 new TransportType { Id = 3, Name = "Running" },
                 new TransportType { Id = 4, Name = "Vacation" }
             );
+
+            modelBuilder.Entity<Difficulty>().HasData(
+                new Difficulty { Id = 1, Name = "Very Easy" },
+                new Difficulty { Id = 2, Name = "Easy" },
+                new Difficulty { Id = 3, Name = "Medium" },
+                new Difficulty { Id = 4, Name = "Hard" },
+                new Difficulty { Id = 5, Name = "Very Hard" }
+            );
         }
 
         public DbSet<User> Users { get; set; }
