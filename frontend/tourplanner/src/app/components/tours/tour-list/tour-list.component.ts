@@ -17,6 +17,11 @@ interface Tour {
   toLocation: string;
   distance: number;
   estimatedTime: number;
+  imageIds: number[];
+  totalLogs: number;
+  popularity: number;
+  childFriendliness: number;
+  averageRating: number;
 }
 
 @Component({
