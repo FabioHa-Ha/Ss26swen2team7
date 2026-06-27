@@ -1,4 +1,6 @@
 /.vs
 /tourplannerBackend/.vs
-/tourplannerBackend/tourplannerBackend/bin
-/tourplannerBackend/tourplannerBackend/obj
+
+# Build output (alle Projekte, inkl. Tests)
+**/bin/
+**/obj/

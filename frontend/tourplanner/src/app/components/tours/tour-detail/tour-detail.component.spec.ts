@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { TourDetailComponent } from './tour-detail.component';
 
@@ -8,7 +11,8 @@ describe('TourDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TourDetailComponent]
+      imports: [TourDetailComponent],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()]
     })
     .compileComponents();
 

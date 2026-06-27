@@ -92,10 +92,18 @@ describe('TourFormComponent', () => {
     expect(emitSpy).not.toHaveBeenCalled();
   });
 
-  it('onSubmit() should emit formData when form is valid', () => {
+  it('onSubmit() should emit form data and pending files when form is valid', () => {
     const emitSpy = spyOn(component.save, 'emit');
     component.formData = { ...component.formData, name: 'Radtour', fromLocation: 'Wien', toLocation: 'Graz', distance: 10, estimatedTime: 60 };
     component.onSubmit();
-    expect(emitSpy).toHaveBeenCalledWith(component.formData);
+    expect(emitSpy).toHaveBeenCalledWith({
+      data: {
+        ...component.formData,
+        imageIds: [],
+        distance: 10,
+        estimatedTime: 60
+      },
+      pendingFiles: []
+    });
   });
 });

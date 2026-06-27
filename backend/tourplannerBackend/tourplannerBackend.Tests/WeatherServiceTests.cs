@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -25,15 +26,20 @@ namespace tourplannerBackend.Tests
             int humidity = 65,
             string description = "clear sky",
             string icon = "01d",
-            double windSpeed = 3.2) =>
-            $$"""
+            double windSpeed = 3.2)
+        {
+            // Format numbers with InvariantCulture so the JSON stays valid
+            // regardless of the machine's locale (e.g. "18.5" not "18,5").
+            var ci = CultureInfo.InvariantCulture;
+            return $$"""
             {
               "weather": [{"description": "{{description}}", "icon": "{{icon}}"}],
-              "main": {"temp": {{temp}}, "feels_like": {{feelsLike}}, "humidity": {{humidity}}},
-              "wind": {"speed": {{windSpeed}}},
+              "main": {"temp": {{temp.ToString(ci)}}, "feels_like": {{feelsLike.ToString(ci)}}, "humidity": {{humidity}}},
+              "wind": {"speed": {{windSpeed.ToString(ci)}}},
               "name": "{{city}}"
             }
             """;
+        }
 
         // ─── GetCurrentWeatherByCityAsync ─────────────────────────────────────
 
@@ -78,7 +84,8 @@ namespace tourplannerBackend.Tests
 
             await service.GetCurrentWeatherByCityAsync("Baden bei Wien");
 
-            var requestUri = handler.LastRequestUri!.ToString();
+            // Use AbsoluteUri: ToString() would decode %20 back to a space.
+            var requestUri = handler.LastRequestUri!.AbsoluteUri;
             Assert.Contains("q=Baden%20bei%20Wien", requestUri);
         }
 
