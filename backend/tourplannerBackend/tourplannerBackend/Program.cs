@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using System.Text;
 using tourplannerBackend.Filters;
 using tourplannerBackend.Middleware;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<ITourLogService, TourLogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IImportExportService, ImportExportService>();
 // Singleton: in-memory collection must survive across requests
 builder.Services.AddSingleton<IContactService, ContactService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();

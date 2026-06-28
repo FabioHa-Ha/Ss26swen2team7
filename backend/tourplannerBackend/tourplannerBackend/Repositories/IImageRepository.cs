@@ -7,5 +7,7 @@ namespace tourplannerBackend.Repositories
     {
         Task<int> CreateImage(TourImage tourImage);
         Task<TourImage?> GetImage(int id);
+
+        Task<IEnumerable<TourImage>> GetByUserId(int userId);
     }
 }

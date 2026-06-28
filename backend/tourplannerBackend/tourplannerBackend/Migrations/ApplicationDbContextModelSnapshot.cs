@@ -36,7 +36,7 @@ namespace tourplannerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Difficulties");
+                    b.ToTable("Difficulties", (string)null);
 
                     b.HasData(
                         new
@@ -110,7 +110,7 @@ namespace tourplannerBackend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tours");
+                    b.ToTable("Tours", (string)null);
                 });
 
             modelBuilder.Entity("tourplannerBackend.Model.TourImage", b =>
@@ -140,7 +140,7 @@ namespace tourplannerBackend.Migrations
 
                     b.HasIndex("TourId");
 
-                    b.ToTable("TourImages");
+                    b.ToTable("TourImages", (string)null);
                 });
 
             modelBuilder.Entity("tourplannerBackend.Model.TourLog", b =>
@@ -183,7 +183,7 @@ namespace tourplannerBackend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TourLogs");
+                    b.ToTable("TourLogs", (string)null);
                 });
 
             modelBuilder.Entity("tourplannerBackend.Model.TransportType", b =>
@@ -200,7 +200,7 @@ namespace tourplannerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransportTypes");
+                    b.ToTable("TransportTypes", (string)null);
 
                     b.HasData(
                         new
@@ -246,7 +246,7 @@ namespace tourplannerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("tourplannerBackend.Model.Tour", b =>

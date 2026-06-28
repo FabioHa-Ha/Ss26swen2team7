@@ -1,4 +1,6 @@
-﻿namespace tourplannerBackend.Model
+﻿using System.Text.Json.Serialization;
+
+namespace tourplannerBackend.Model
 {
     public class Tour
     {
@@ -12,6 +14,7 @@
         public int? Distance { get; set; }
         public int? EstimatedTime { get; set; }
         public string? RouteInformation { get; set; }
+        [JsonIgnore]
         public ICollection<TourImage> Images { get; set; } = [];
     }
 }

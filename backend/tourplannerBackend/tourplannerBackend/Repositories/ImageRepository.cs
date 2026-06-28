@@ -1,4 +1,5 @@
-﻿using tourplannerBackend.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using tourplannerBackend.DTOs;
 using tourplannerBackend.Model;
 using tourPlannerBackend.Data;
 
@@ -24,6 +25,14 @@ namespace tourplannerBackend.Repositories
         public async Task<TourImage?> GetImage(int id)
         {
             return await _context.TourImages.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<TourImage>> GetByUserId(int userId)
+        {
+            return await _context.TourImages
+                            .Include(i => i.Tour)
+                            .Where(i => i.Tour.User.Id == userId)
+                            .ToListAsync();
         }
     }
 }

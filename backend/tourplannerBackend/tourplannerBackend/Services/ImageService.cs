@@ -64,7 +64,7 @@ namespace tourplannerBackend.Services
 
             TourImage tourImage = new TourImage
             {
-                TourId = tour.Id,
+                Tour = tour,
                 Image = imageBytes,
                 FileName = Path.GetFileNameWithoutExtension(imageCreateDto.Image.FileName) + ".jpeg",
                 ContentType = "image/jpeg",
