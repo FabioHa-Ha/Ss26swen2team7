@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { FilterService } from '../../../services/filter.service';
+import { ImportExportService } from '../../../services/import-export.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,8 +12,11 @@ import { FilterService } from '../../../services/filter.service';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
+  importSuccess = false;
+  importError = false;
 
-  constructor(private authService: AuthService, private router: Router, private filterService: FilterService) {}
+
+  constructor(private authService: AuthService, private router: Router, private filterService: FilterService, private importExportService: ImportExportService) {}
   
   someTours = [
     {
@@ -110,11 +114,38 @@ export class SidebarComponent {
   }
 
   exportData(): void {
-    // TODO
+    this.importExportService.export().subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'tour-planner-export.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error('Export failed', err)
+    });
   }
 
   importData(event: Event): void {
-    // TODO
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    this.importExportService.import(file).subscribe({
+      next: () => {
+        this.importSuccess = true;
+        setTimeout(() => this.importSuccess = false, 3000);
+        input.value = '';
+      },
+      error: (err) => {
+        console.error('Import failed', err);
+        this.importError = true;
+        setTimeout(() => this.importError = false, 3000);
+      }
+    });
   }
 
   logout(): void {

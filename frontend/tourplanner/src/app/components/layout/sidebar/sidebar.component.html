@@ -149,6 +149,8 @@
 
       <!-- Footer Actions -->
       <div class="p-3 border-t border-sidebar-border space-y-1">
+
+        <!-- Export -->
         <button 
           (click)="exportData()"
           class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
@@ -161,16 +163,27 @@
             }
         </button>
 
-        <label class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors cursor-pointer">
-          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-            @if (!collapsed) {
+        <!-- Import -->
+        <label class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sidebar-foreground hover:bg-sidebar-accent transition-colors cursor-pointer"
+          [class.text-green-500]="importSuccess"
+          [class.text-red-500]="importError"
+          [class.text-sidebar-foreground]="!importSuccess && !importError">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+          @if (!collapsed) {
+            @if (importSuccess) {
+              <span>Imported!</span>
+            } @else if (importError) {
+              <span>Import failed</span>
+            } @else {
               <span>Import</span>
             }
-          <input type="file" class="hidden" accept=".json" (change)="importData($event)">
+          }
+          <input type="file" class="hidden" accept=".zip" (change)="importData($event)">
         </label>
 
+        <!-- Logout -->
         <button 
           (click)="logout()"
           class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-destructive hover:bg-destructive/10 transition-colors"
