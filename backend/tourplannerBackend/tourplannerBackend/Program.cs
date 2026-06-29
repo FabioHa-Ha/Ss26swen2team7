@@ -37,6 +37,7 @@ builder.Services.AddScoped<IImportExportService, ImportExportService>();
 // Singleton: in-memory collection must survive across requests
 builder.Services.AddSingleton<IContactService, ContactService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+builder.Services.AddHttpClient<IRouteService, RouteService>();
 
 // --- Error Handling (Task 5) --------------------------------------------------
 // 1. RFC-7807 ProblemDetails: standard error response shape for the whole API.

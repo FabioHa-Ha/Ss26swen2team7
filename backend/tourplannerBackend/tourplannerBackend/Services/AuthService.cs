@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using tourplannerBackend.DTOs;
+using tourplannerBackend.Exceptions;
 using tourplannerBackend.Model;
 using tourplannerBackend.Repositories;
 
@@ -22,8 +23,10 @@ namespace tourplannerBackend.Services
 
         public async Task<AuthResponseDto> RegisterAsync(UserRegisterDto dto)
         {
+            // BL layer raises its own domain exception (ConflictException → HTTP 409)
+            // instead of leaking a framework exception (InvalidOperationException) upwards.
             if (await _userRepository.ExistsAsync(dto.Username))
-                throw new InvalidOperationException($"Username '{dto.Username}' is already taken.");
+                throw new ConflictException($"Username '{dto.Username}' is already taken.");
 
             var user = new User
             {

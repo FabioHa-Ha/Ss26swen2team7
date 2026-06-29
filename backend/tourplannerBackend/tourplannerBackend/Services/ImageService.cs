@@ -3,6 +3,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using tourplannerBackend.DTOs;
+using tourplannerBackend.Exceptions;
 using tourplannerBackend.Model;
 using tourplannerBackend.Repositories;
 
@@ -59,7 +60,9 @@ namespace tourplannerBackend.Services
 
             if (tour == null)
             {
-                throw new KeyNotFoundException($"Tour with id {imageCreateDto.TourId} not found.");
+                // Use the BL layer's own domain exception (→ HTTP 404) instead of
+                // the framework's KeyNotFoundException.
+                throw new NotFoundException(nameof(Tour), imageCreateDto.TourId);
             }
 
             TourImage tourImage = new TourImage
