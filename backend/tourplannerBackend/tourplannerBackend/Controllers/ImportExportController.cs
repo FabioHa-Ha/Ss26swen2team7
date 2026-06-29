@@ -35,8 +35,15 @@ namespace tourplannerBackend.Controllers
         public async Task<IActionResult> ImportUserData([FromForm] ImportUserDto importUserDto)
         {
             var userId = GetUserId();
-            await _importExportService.ImportDatabaseForUser(importUserDto.importFile, userId);
-            return Ok();
+            try
+            {
+                await _importExportService.ImportDatabaseForUser(importUserDto.importFile, userId);
+                return Created();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         private int GetUserId()
