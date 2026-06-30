@@ -6,6 +6,7 @@ import { TourService } from '../../../services/tour.service';
 import { TourLogService } from '../../../services/tour-log.services';
 import { ImageService } from '../../../services/image.service';
 import { MapComponent } from '../../shared/map/map.component';
+import { WeatherCardComponent } from '../../shared/weather-card/weather-card/weather-card.component';
 
 interface TourLog {
   id: string;
@@ -34,7 +35,7 @@ interface Tour {
 
 @Component({
   selector: 'app-tour-detail',
-  imports: [CommonModule, TourLogFormComponent, MapComponent],
+  imports: [CommonModule, TourLogFormComponent, MapComponent, WeatherCardComponent],
   templateUrl: './tour-detail.component.html',
   styleUrl: './tour-detail.component.css',
 })

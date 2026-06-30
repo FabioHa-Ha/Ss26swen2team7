@@ -33,6 +33,12 @@
       <!-- Map -->
       <app-map [fromLocation]="t.fromLocation" [toLocation]="t.toLocation" />
 
+      <!-- Weather -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+        <app-weather-card label="Start Weather" [locationName]="t.fromLocation" />
+        <app-weather-card label="Destination Weather" [locationName]="t.toLocation" />
+      </div>
+
       <!-- Photo Gallery -->
       @if (imageUrls.length > 0) {
         <div>
