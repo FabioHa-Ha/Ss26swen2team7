@@ -54,7 +54,7 @@ export class DashboardComponent implements OnInit{
   private computeStats(): void {
     const toursByType = { bike: 0, hike: 0, running: 0, vacation: 0 };
     this.tours.forEach(t => {
-      const type = t.transportType?.toLowerCase();
+      const type = t.transportTypeName?.toLowerCase();
       if (type in toursByType) {
         toursByType[type as keyof typeof toursByType]++;
       }
@@ -69,10 +69,10 @@ export class DashboardComponent implements OnInit{
     const popularTours = this.tours
       .map(tour => ({
         tour,
-        stats: { totallogs: logCountByTour.get(tour.id) ?? 0 }
+        stats: { totalLogs: logCountByTour.get(tour.id) ?? 0 }
       }))
-      .filter(x => x.stats.totallogs > 0)
-      .sort((a, b) => b.stats.totallogs - a.stats.totallogs)
+      .filter(x => x.stats.totalLogs > 0)
+      .sort((a, b) => b.stats.totalLogs - a.stats.totalLogs)
       .slice(0, 5);
 
       // recent logs: last 5 logs with their tour info

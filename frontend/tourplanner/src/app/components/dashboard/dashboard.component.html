@@ -1,4 +1,5 @@
 <div class="h-full flex flex-col">
+
       <!-- Header -->
       <header class="px-6 py-4 pl-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <h1 class="text-2xl font-bold text-foreground">Dashboard</h1>
@@ -7,6 +8,7 @@
 
       <!-- Content -->
       <div class="flex-1 overflow-auto p-6">
+
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div class="bg-card border border-border rounded-lg p-5">
@@ -67,6 +69,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
           <!-- Tours by Type -->
           <div class="bg-card border border-border rounded-lg">
             <div class="px-5 py-4 border-b border-border">
@@ -163,9 +166,12 @@
             <div class="px-5 py-4 border-b border-border">
               <h2 class="text-lg font-semibold text-foreground">Recent Activity</h2>
             </div>
+
+            @if (stats().recentLogs.length === 0) {
               <div class="p-8 text-center">
                 <p class="text-muted-foreground">No recent activity</p>
               </div>
+            } @else {
               <div class="divide-y divide-border">
                 @for (item of stats().recentLogs; track item.log.id) {
                   <div class="px-5 py-3">
@@ -181,6 +187,7 @@
                   </div>
                 }
               </div>
+            }
           </div>
         </div>
       </div>
