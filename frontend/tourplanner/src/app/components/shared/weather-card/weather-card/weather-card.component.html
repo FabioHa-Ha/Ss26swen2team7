@@ -1,0 +1,21 @@
+<div class="bg-card border border-border rounded-lg p-4">
+      <p class="text-xs text-muted-foreground mb-1">{{ label }}</p>
+      <p class="text-sm font-medium mb-2">{{ locationName }}</p>
+
+      @if (loading) {
+        <p class="text-sm text-muted-foreground">Loading weather...</p>
+      } @else if (error) {
+        <p class="text-sm text-muted-foreground">Weather unavailable</p>
+      } @else if (weather) {
+        <div class="flex items-baseline gap-2 mb-3">
+          <span class="text-3xl font-bold">{{ weather.temperature | number:'1.0-0' }}°C</span>
+          <span class="text-sm text-muted-foreground">Feels like {{ weather.feelsLikeTemperature | number:'1.0-0' }}°C</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+          <span>💨 Wind: {{ weather.windSpeed | number:'1.0-0' }} km/h</span>
+          <span>💧 Humidity: {{ weather.humidity | number:'1.0-0' }}%</span>
+          <span>☀️ UV Index: {{ weather.uvIndex | number:'1.0-0' }}</span>
+          <span>🌧️ Rain: {{ weather.chanceOfRain | number:'1.0-0' }}%</span>
+        </div>
+      }
+    </div>
