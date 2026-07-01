@@ -36,7 +36,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IImportExportService, ImportExportService>();
 // Singleton: in-memory collection must survive across requests
-builder.Services.AddSingleton<IContactService, ContactService>();
 builder.Services.AddHttpClient<IRouteService, RouteService>();
 
 // --- Error Handling (Task 5) --------------------------------------------------
