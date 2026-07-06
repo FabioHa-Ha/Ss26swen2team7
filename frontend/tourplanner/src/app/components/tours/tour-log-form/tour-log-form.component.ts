@@ -78,15 +78,16 @@ export class TourLogFormComponent {
   isValid(): boolean {
     return !!(
       this.formData.date &&
-      this.formData.difficulty >= 1 && this.formData.difficulty <= 5 &&
-      Number.isFinite(this.formData.totalDistance) && this.formData.totalDistance > 0 &&
-      Number.isFinite(this.formData.totalTime) && this.formData.totalTime > 0 &&
-      this.formData.rating >= 1 && this.formData.rating <= 5
+      Number(this.formData.difficulty) >= 1 && Number(this.formData.difficulty) <= 5 &&
+      Number.isFinite(Number(this.formData.totalDistance)) && Number(this.formData.totalDistance) > 0 &&
+      Number.isFinite(Number(this.formData.totalTime)) && Number(this.formData.totalTime) > 0 &&
+      Number(this.formData.rating) >= 1 && Number(this.formData.rating) <= 5
     );
   }
 
   onSubmit(): void {
     this.submitted = true;
+    console.log('formData:', this.formData, 'isValid:', this.isValid());
     if (!this.isValid()) return;
     this.save.emit({
       date: new Date(this.formData.date),
